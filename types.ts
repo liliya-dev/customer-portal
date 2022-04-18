@@ -1,11 +1,14 @@
 export type UserType = {
-  lastActiveDate: string;
   license: string;
   role: string;
   email: string;
-  id: string;
   name: string;
 };
+
+export type UserFields = {
+  id: string;
+  lastActiveDate: string;
+} & UserType
 
 export const COLORS = {
   blue: '#496fff',

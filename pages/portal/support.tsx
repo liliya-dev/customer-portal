@@ -1,6 +1,6 @@
 import { Layout } from '../../layout/Layout';
 
-export default function Home() {
+export default function Page() {
   return (
     <Layout>
       <p>support tab</p>

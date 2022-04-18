@@ -6,7 +6,7 @@ import { useEffect } from 'react';
 import { Button } from '../components/buttons/Button';
 import { Spinner } from '../components/loaders/Spinner';
 
-export default function Home() {
+export default function Page() {
   const { instance, inProgress } = useMsal();
   const router = useRouter();
   const isAuthenticated = useIsAuthenticated();

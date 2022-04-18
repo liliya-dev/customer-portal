@@ -1,6 +1,4 @@
 import { useMsal } from '@azure/msal-react';
-import NextLink from 'next/link';
-import cx from 'classnames';
 import { useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { menuItems } from './LayoutOptions';
@@ -44,6 +42,7 @@ export const Layout = ({ children }) => {
               label={title}
               theme='lightblue'
               stretch
+              key={id}
             />
           ))
         }

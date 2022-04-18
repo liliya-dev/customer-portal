@@ -9,25 +9,31 @@ export type BasicReqType = {
 
 export type SortFilterType = {
   query?: string;
-  orderedby?: 'lastActive' | 'name' | 'email';
+  orderedby?: 'lastActiveDate' | 'name' | 'email';
   direction?: 'asc' | 'desc';
+  page?: number;
+  perPage?: Number;
 };
 
 export type BodyUserType = {
-  body: Partial<UserType>;
+  body: UserType;
 };
+
+export type EditableUserType = {
+  body: Partial<UserType>;
+}
 
 class Data extends API {
   // user actions
   deleteUser({ tid, userId, token }: BasicReqType) {
-    return this.request(`/user?tid=${tid}&userId=${userId}`, {
+    return this.request(`/users?tid=${tid}&userId=${userId}`, {
       method: 'DELETE',
       token,
     });
   }
 
-  editUser({ tid, userId, body, token }: BasicReqType & BodyUserType) {
-    return this.request(`/user?tid=${tid}&userId=${userId}`, {
+  editUser({ tid, userId, body, token }: BasicReqType & EditableUserType) {
+    return this.request(`/users?tid=${tid}&userId=${userId}`, {
       method: 'PATCH',
       body,
       token,
@@ -35,7 +41,7 @@ class Data extends API {
   }
 
   addUser({ tid, body, token }: BasicReqType & BodyUserType) {
-    return this.request(`/user?tid=${tid}`, {
+    return this.request(`/users?tid=${tid}`, {
       method: 'POST',
       body,
       token,
@@ -52,13 +58,15 @@ class Data extends API {
 
   getUsers({
     tid,
-    orderedby = 'lastActive',
+    orderedby = 'lastActiveDate',
     direction = 'asc',
     query = '',
+    page = 0,
+    perPage = 10,
     token,
   }: BasicReqType & SortFilterType) {
     return this.request(
-      `/organization?tid=${tid}&orderedby=${orderedby}&query=${query}&direction=${direction}`,
+      `/users?tid=${tid}&orderedby=${orderedby}&query=${query}&direction=${direction}&page=${page}&perPage=${perPage}`,
       { token },
     );
   }

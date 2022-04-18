@@ -1,0 +1,130 @@
+[
+  {
+    "lastActiveDate": "2022-01-24T12:44:26.137Z",
+    "license": "FREE",
+    "role": "ADMIN",
+    "email": "bmits@harmon.ie",
+    "name": "Simon Simon",
+    "id": "3458764511081783382"
+  },
+  {
+    "lastActiveDate": "2022-01-23T12:44:26.137Z",
+    "license": "FREE",
+    "role": "ORGANIZATION_EXTERNAL_USER",
+    "email": "test@harmon.ie",
+    "name": "Peter Peter",
+    "id": "7458764511081783382"
+  },
+  {
+    "lastActiveDate": "2022-01-21T12:44:26.137Z",
+    "license": "FREE",
+    "role": "ORGANIZATION_EXTERNAL_USER",
+    "email": "atest@harmon.ie",
+    "name": "John John",
+    "id": "8358764511081783382"
+  },
+  {
+    "lastActiveDate": "2022-03-21T12:44:26.137Z",
+    "license": "FREE",
+    "role": "ORGANIZATION_EXTERNAL_USER",
+    "email": "ketty@harmon.ie",
+    "name": "Ketty Simon",
+    "id": "8358764511081783311"
+  },
+  {
+    "lastActiveDate": "2022-03-26T12:44:26.137Z",
+    "license": "FREE",
+    "role": "ORGANIZATION_EXTERNAL_USER",
+    "email": "ketty@harmon.ie",
+    "name": "Ketty Simon",
+    "id": "8358764511081783311"
+  },
+  {
+    "lastActiveDate": "2022-02-26T12:44:26.137Z",
+    "license": "FREE",
+    "role": "ORGANIZATION_EXTERNAL_USER",
+    "email": "anna@harmon.ie",
+    "name": "Anna Johnson",
+    "id": "8356164511081783311"
+  },
+  {
+    "lastActiveDate": "2022-01-10T12:44:26.137Z",
+    "license": "FREE",
+    "role": "ORGANIZATION_EXTERNAL_USER",
+    "email": "chester@harmon.ie",
+    "name": "Chester Peterson",
+    "id": "1256164511081783311"
+  },
+  {
+    "lastActiveDate": "2022-01-12T12:44:26.137Z",
+    "license": "FREE",
+    "role": "ORGANIZATION_EXTERNAL_USER",
+    "email": "amir@harmon.ie",
+    "name": "Amir Akbari",
+    "id": "7126164511081783311"
+  },
+  {
+    "lastActiveDate": "2022-02-12T12:44:26.137Z",
+    "license": "FREE",
+    "role": "ORGANIZATION_EXTERNAL_USER",
+    "email": "sofia@harmon.ie",
+    "name": "Sofia Brown",
+    "id": "1116164511081783311"
+  },
+  {
+    "lastActiveDate": "2022-02-14T12:44:26.137Z",
+    "license": "FREE",
+    "role": "ORGANIZATION_EXTERNAL_USER",
+    "email": "helen@harmon.ie",
+    "name": "Helen Smith",
+    "id": "1111164511081783311"
+  },
+  {
+    "lastActiveDate": "2022-02-18T12:44:26.137Z",
+    "license": "FREE",
+    "role": "ORGANIZATION_EXTERNAL_USER",
+    "email": "dan@harmon.ie",
+    "name": "Dan Miller",
+    "id": "1331164511081783311"
+  },
+  {
+    "lastActiveDate": "2022-02-28T12:44:26.137Z",
+    "license": "FREE",
+    "role": "ORGANIZATION_EXTERNAL_USER",
+    "email": "antony@harmon.ie",
+    "name": "Ketty Mouser",
+    "id": "1336164511081783311"
+  },
+  {
+    "license": "FREE",
+    "role": "ORGANIZATION_EXTERNAL_USER",
+    "email": "new-email@harmon.ie",
+    "name": "New User",
+    "id": "l24lh70n4kw0115sxwt",
+    "lastActiveDate": "2022-04-18T10:49:09.575Z"
+  },
+  {
+    "license": "FREE",
+    "role": "ORGANIZATION_EXTERNAL_USER",
+    "email": "new-email@harmon.ie",
+    "name": "New User",
+    "id": "l24li3dpe50noaabpjm",
+    "lastActiveDate": "2022-04-18T10:49:51.517Z"
+  },
+  {
+    "license": "FREE",
+    "role": "ORGANIZATION_EXTERNAL_USER",
+    "email": "new-email@harmon.ie",
+    "name": "New User",
+    "id": "l24ljd715jhav3zvfm7",
+    "lastActiveDate": "2022-04-18T10:50:50.893Z"
+  },
+  {
+    "license": "FREE",
+    "role": "ORGANIZATION_EXTERNAL_USER",
+    "email": "new-email@harmon.ie",
+    "name": "New User",
+    "id": "l24lkyw4t1pgg7k3l6k",
+    "lastActiveDate": "2022-04-18T10:52:05.668Z"
+  }
+]

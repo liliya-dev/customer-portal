@@ -1,9 +1,10 @@
 import { Layout } from '../../layout/Layout';
+import UserLicensesScene from '../../scenes/UsersLicensesScene';
 
-export default function Home() {
+export default function Page() {
   return (
     <Layout>
-      <p className=''>users and licenses</p>
+      <UserLicensesScene />
     </Layout>
   );
 }
