@@ -14,7 +14,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<string>) => {
     .collection('organization')
     .find({ tid })
     .toArray();
-  res.status(200).send(JSON.stringify(organizationData));
+  res.status(200).send(JSON.stringify({organizationData}));
 };
 
 export default handler;
