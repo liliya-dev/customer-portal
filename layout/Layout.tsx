@@ -19,42 +19,36 @@ export const Layout = ({ children }) => {
     if (!isAuthenticated && inProgress === 'none') {
       router.push('/');
     }
-  })
+  });
 
   if (inProgress !== 'none') {
     return (
-      <div className='w-24 h-24 m-auto mt-24'>
+      <div className="w-24 h-24 m-auto mt-24">
         <Spinner />
       </div>
-    )
+    );
   }
 
   if (!isAuthenticated) return null;
 
   return (
-    <div className='flex w-full p-16'>
-      <div className='w-64'>
-        {
-          menuItems.map(({ title, id, icon }) => (
-            <Button
-              as='a'
-              href={`/portal/${id}`}
-              label={title}
-              theme='lightblue'
-              stretch
-              key={id}
-            />
-          ))
-        }
+    <div className="flex w-full p-16">
+      <div className="w-64">
+        {menuItems.map(({ title, id, icon }) => (
+          <Button
+            as="a"
+            href={`/portal/${id}`}
+            label={title}
+            theme="lightblue"
+            stretch
+            key={id}
+          />
+        ))}
       </div>
-      <div className='p-16'>
+      <div className="p-16">
         {children}
-        <Button
-          label='signout'
-          onClick={() => instance.logout()}
-          as='button'
-        />
+        <Button label="signout" onClick={() => instance.logout()} as="button" />
       </div>
     </div>
-  )
-}
+  );
+};

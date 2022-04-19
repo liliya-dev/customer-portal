@@ -5,7 +5,7 @@ const nextConfig = {
     APP_TENANT_ID: process.env.APP_TENANT_ID,
     LOGIN_REDIRECT_URI: process.env.LOGIN_REDIRECT_URI,
     LOGOUT_REDIRECT_URI: process.env.LOGOUT_REDIRECT_URI,
-    API_URL: process.env.API_URL
+    API_URL: process.env.API_URL,
   },
   webpack(config) {
     config.module.rules.push({

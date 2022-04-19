@@ -15,10 +15,10 @@ function MyApp({ Component, pageProps }: AppProps) {
   if (!showChild) {
     return null;
   }
-  
+
   if (typeof window === 'undefined') {
     return <></>;
-  } 
+  }
   return (
     <MsalProvider instance={msalInstance}>
       <Component {...pageProps} />

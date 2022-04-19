@@ -12,19 +12,19 @@ export default function Page() {
   const isAuthenticated = useIsAuthenticated();
 
   useEffect(() => {
-    console.log(isAuthenticated, inProgress)
+    console.log(isAuthenticated, inProgress);
     if (isAuthenticated && inProgress === 'none') {
-      console.log('pus')
+      console.log('pus');
       router.push('/portal/users-licenses');
     }
-  })
+  });
 
   if (inProgress !== 'none') {
     return (
-      <div className='w-24 h-24 m-auto mt-24'>
+      <div className="w-24 h-24 m-auto mt-24">
         <Spinner />
       </div>
-    )
+    );
   }
 
   if (isAuthenticated) return null;
@@ -35,12 +35,12 @@ export default function Page() {
         <title>harmon.ie Login</title>
       </Head>
       <Button
-        label='Sign in with Microsoft'
+        label="Sign in with Microsoft"
         onClick={() => instance.loginRedirect()}
-        theme='white'
-        icon='FacebookIcon'
-        iconPosition='before'
-        as='button'
+        theme="white"
+        icon="FacebookIcon"
+        iconPosition="before"
+        as="button"
       />
     </div>
   );

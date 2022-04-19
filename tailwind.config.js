@@ -262,7 +262,6 @@ module.exports = {
           });
         };
       };
-
       addVariant('group-focus-within', groupPseudoClassVariant('focus-within'));
     }),
   ],

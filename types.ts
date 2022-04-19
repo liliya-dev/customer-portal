@@ -8,7 +8,7 @@ export type UserType = {
 export type UserFields = {
   id: string;
   lastActiveDate: string;
-} & UserType
+} & UserType;
 
 export const COLORS = {
   blue: '#496fff',

@@ -21,7 +21,7 @@ export type BodyUserType = {
 
 export type EditableUserType = {
   body: Partial<UserType>;
-}
+};
 
 class Data extends API {
   // user actions
