@@ -25,24 +25,15 @@ module.exports = {
       lineHeight: {
         mini: '1.15',
       },
-      gridTemplateColumns: {
-        modal: '1fr 56px',
-      },
       transitionTimingFunction: {
         'in-cubic': 'cubic-bezier(0.550, 0.055, 0.675, 0.190)',
         'out-cubic': 'cubic-bezier(0.215, 0.610, 0.355, 1.000)',
         'in-out-cubic': 'cubic-bezier(0.645, 0.045, 0.355, 1.000)',
       },
-      spacing: {
-        '60px': '60px',
-      },
       width: {
         '85vw': '85vw',
         xxs: '375px',
         xxxl: '1600px',
-        315: '315px',
-        450: '450px',
-        550: '550px',
       },
       typography: (theme) => ({
         DEFAULT: {
