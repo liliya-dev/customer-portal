@@ -1,12 +1,11 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-const fs = require('fs');
-const usersData = require('../../../mock-data/users.json');
-
-function saveData(users) {
-  fs.writeFileSync('mock-data/users.json', JSON.stringify(users, null, 2));
-}
+import clientPromise from '../../../lib/mongodb';
+const ObjectId = require('mongodb').ObjectID;
 
 const handler = async (req: NextApiRequest, res: NextApiResponse<string>) => {
+  const client = await clientPromise;
+  const db = client.db(process.env.MONGODB_DB);
+
   if (!req.headers.authorization)
     res.status(403).send(JSON.stringify({ status: 403, message: 'Not Allowed' }));
   const { tid } = req.query;
@@ -18,53 +17,63 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<string>) => {
     const pageNumber = +page || 0;
     const perPageNumber = +perPage || 10;
     const orderedKey = Array.isArray(orderedby) ? orderedby[0] : orderedby;
-    const users = [...usersData]
-      .filter(
-        (user) =>
-          user.name.toLowerCase().includes(query) ||
-          user.email.toLowerCase().includes(query),
-      )
-      .sort((a, b) => {
-        const aValue =
-          orderedKey === 'lastActiveDate'
-            ? Date.parse(a[orderedKey])
-            : a[orderedKey];
-        const bValue =
-          orderedKey === 'lastActiveDate'
-            ? Date.parse(b[orderedKey])
-            : b[orderedKey];
-        if (direction === 'asc')
-          return orderedKey === 'lastActiveDate'
-            ? aValue - bValue
-            : aValue.localeCompare(bValue);
-        return orderedKey === 'lastActiveDate'
-          ? bValue - aValue
-          : bValue.localeCompare(aValue);
-      });
-    const paginatedUsers = users.slice(
-      pageNumber * perPageNumber,
-      (pageNumber + 1) * perPageNumber,
-    );
+    const directionValue = direction === 'asc' ? 1 : -1;
+    const sort = { [orderedKey]: directionValue };
+    const data = await db
+      .collection('users')
+      .aggregate([
+        {
+          $match: {
+            $or: [
+              { name: { $regex: query, $options: 'i' } },
+              { email: { $regex: query, $options: 'i' } },
+            ],
+          },
+        },
+        { $match: { tid: tid } },
+        {
+          $project: {
+            name: 1,
+            email: 1,
+            license: 1,
+            role: 1,
+            lastActiveDate: {
+              $dateFromString: {
+                dateString: '$lastActiveDate',
+              },
+            },
+          },
+        },
+        { $sort: { ...sort } },
+        {
+          $facet: {
+            users: [
+              { $skip: pageNumber * perPageNumber },
+              { $limit: perPageNumber },
+            ],
+            pagination: [{ $count: 'total' }],
+          },
+        },
+      ])
+      .toArray();
 
-    res
-      .status(200)
-      .send(
-        JSON.stringify({
-          users: paginatedUsers,
-          total: users.length,
-          page,
-          perPage,
-        }),
-      );
+    res.status(200).send(
+      JSON.stringify({
+        users: data[0].users,
+        total: data[0].pagination[0] ? data[0].pagination[0].total : 0,
+        page,
+        perPage,
+      }),
+    );
   } else if (req.method === 'DELETE') {
     const { userId } = req.query;
     if (!userId)
       res
         .status(404)
         .send(JSON.stringify({ status: 404, message: 'User id is required' }));
-    const users = usersData.filter((user) => user.id !== userId);
-    saveData(users);
-    res.status(200).send(JSON.stringify({ status: 200 }));
+
+    const data = await db.collection('users').deleteOne({ _id: ObjectId(userId) });
+    if (data.deletedCount > 0) res.status(200).send(JSON.stringify({ status: 200 }));
   } else if (req.method === 'PATCH') {
     const payload = req.body;
     const { userId } = req.query;
@@ -72,30 +81,31 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<string>) => {
       res
         .status(404)
         .send(JSON.stringify({ status: 404, message: 'User id is required' }));
-    const users = usersData.map((user) => {
-      return user.id === userId ? { ...user, ...payload } : user;
-    });
-    saveData(users);
-    res.status(200).send(JSON.stringify({ status: 200 }));
+    const users = await db
+      .collection('users')
+      .updateOne({ _id: ObjectId(userId) }, { $set: { ...payload } });
+    if (users.modifiedCount > 0)
+      res.status(200).send(JSON.stringify({ status: 200 }));
   } else if (req.method === 'POST') {
-    console.log('here');
     const payload = req.body;
+    const { name, email, role, license } = payload;
 
-    const uniqueId = () => {
-      const dateString = Date.now().toString(36);
-      const randomness = Math.random().toString(36).substr(2);
-      return dateString + randomness;
-    };
+    if (!name || !email || !role || !license)
+      res.status(404).send(
+        JSON.stringify({
+          status: 404,
+          message: 'You need to pass all required fields',
+        }),
+      );
 
     const user = {
       ...payload,
-      id: uniqueId(),
+      tid,
       lastActiveDate: new Date().toISOString(),
     };
 
-    const users = [...usersData, user];
-    saveData(users);
-    res.status(200).send(JSON.stringify({ status: 200 }));
+    const data = await db.collection('users').insertOne(user);
+    if (data.insertedId) res.status(200).send(JSON.stringify({ status: 200 }));
   }
 };
 

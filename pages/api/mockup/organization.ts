@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-const organizationData = require('../../../mock-data/organization.json');
+import clientPromise from '../../../lib/mongodb';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse<string>) => {
   if (!req.headers.authorization)
@@ -8,7 +8,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<string>) => {
   if (!tid)
     res.status(404).send(JSON.stringify({ status: 404, message: 'Not Found' }));
 
-  res.status(200).send(JSON.stringify({ ...organizationData }));
+  const client = await clientPromise;
+  const db = client.db(process.env.MONGODB_DB);
+  const organizationData = await db
+    .collection('organization')
+    .find({ tid })
+    .toArray();
+  res.status(200).send(JSON.stringify(organizationData));
 };
 
 export default handler;

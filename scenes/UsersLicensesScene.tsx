@@ -21,7 +21,11 @@ const UserLicensesScene = () => {
     const response = await dataAPI.getUsers({
       tid: accounts[0]?.tenantId,
       token,
-      query: 'a',
+      query: 'new',
+      page: 0,
+      perPage: 10,
+      orderedby: 'name',
+      direction: 'asc',
     });
     console.log(response);
   };
@@ -30,7 +34,7 @@ const UserLicensesScene = () => {
     const response = await dataAPI.deleteUser({
       tid: accounts[0]?.tenantId,
       token,
-      userId: 'l24ljd715jhav3zvfm7',
+      userId: '625e7b02e1eb285760f170f8',
     });
     console.log(response);
   };
@@ -39,9 +43,10 @@ const UserLicensesScene = () => {
     const response = await dataAPI.editUser({
       tid: accounts[0]?.tenantId,
       token,
-      userId: 'l24lkyw4t1pgg7k3l6k',
+      userId: '625e8ee58f6a52d8af01aaa2',
       body: {
-        name: 'Check Mouser',
+        name: 'Antony Second',
+        email: 'mowilly@gmai.com',
       },
     });
     console.log(response);
@@ -54,8 +59,8 @@ const UserLicensesScene = () => {
       body: {
         license: 'FREE',
         role: 'ORGANIZATION_EXTERNAL_USER',
-        email: 'check-email@harmon.ie',
-        name: 'check User',
+        email: 'ivan@harmon.ie',
+        name: 'Ivan Ivan',
       },
     });
     console.log(response);
