@@ -12,9 +12,7 @@ export default function Page() {
   const isAuthenticated = useIsAuthenticated();
 
   useEffect(() => {
-    console.log(isAuthenticated, inProgress);
     if (isAuthenticated && inProgress === 'none') {
-      console.log('pus');
       router.push('/portal/users-licenses');
     }
   });

@@ -3,6 +3,7 @@ export type UserType = {
   role: string;
   email: string;
   name: string;
+  department: string;
 };
 
 export type UserFields = {

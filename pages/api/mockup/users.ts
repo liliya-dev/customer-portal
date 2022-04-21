@@ -37,6 +37,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<string>) => {
             email: 1,
             license: 1,
             role: 1,
+            department: 1,
             lastActiveDate: {
               $dateFromString: {
                 dateString: '$lastActiveDate',
@@ -88,9 +89,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<string>) => {
       res.status(200).send(JSON.stringify({ status: 200 }));
   } else if (req.method === 'POST') {
     const payload = req.body;
-    const { name, email, role, license } = payload;
+    const { name, email, role, license, department } = payload;
 
-    if (!name || !email || !role || !license)
+    if (!name || !email || !role || !license || !department)
       res.status(404).send(
         JSON.stringify({
           status: 404,

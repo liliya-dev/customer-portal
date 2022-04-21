@@ -43,10 +43,9 @@ const UserLicensesScene = () => {
     const response = await dataAPI.editUser({
       tid: accounts[0]?.tenantId,
       token,
-      userId: '625e8ee58f6a52d8af01aaa2',
+      userId: '625e7b02e1eb285760f170ee',
       body: {
-        name: 'Antony Second',
-        email: 'mowilly@gmai.com',
+        department: 'Marketing',
       },
     });
     console.log(response);
@@ -57,6 +56,7 @@ const UserLicensesScene = () => {
       tid: accounts[0]?.tenantId,
       token,
       body: {
+        department: 'Accounting and Finance',
         license: 'FREE',
         role: 'ORGANIZATION_EXTERNAL_USER',
         email: 'ivan@harmon.ie',
