@@ -273,7 +273,7 @@ const HarmonieIconGreen = ({ className }) => (
   </svg>
 );
 
-const CloseIcon = () => (
+const CloseIcon = ({ className }) => (
   <svg
     width="18"
     height="18"
@@ -308,6 +308,22 @@ const Point = () => (
   </svg>
 );
 
+const MicrosoftIcon = ({ className }) => (
+  <svg
+    className={className}
+    width="22"
+    height="22"
+    viewBox="0 0 22 22"
+    fill="currentColor"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path d="M10.5 1.49994H1.5V10.4999H10.5V1.49994Z" fill="#F25022" />
+    <path d="M10.5 11.4999H1.5V20.4999H10.5V11.4999Z" fill="#00A4EF" />
+    <path d="M20.5 1.49994H11.5V10.4999H20.5V1.49994Z" fill="#7FBA00" />
+    <path d="M20.5 11.4999H11.5V20.4999H20.5V11.4999Z" fill="#FFB900" />
+  </svg>
+);
+
 export const Icons = {
   // Custom social media icons
   FacebookIcon,
@@ -319,6 +335,7 @@ export const Icons = {
   HarmonieIconGreen,
   HarmonieIconYellow,
   CloseIcon,
+  MicrosoftIcon,
   Point,
 };
 

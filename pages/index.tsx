@@ -4,8 +4,11 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { Button } from '../components/buttons/Button';
+import { Title } from '../components/title/Title';
 import { Spinner } from '../components/loaders/Spinner';
-
+import { Wrapper } from '../components/wrapper/Wrapper';
+import { Icon } from '../components/icons/Icon';
+import { Nav } from '../layout/Nav/Nav';
 export default function Page() {
   const { instance, inProgress } = useMsal();
   const router = useRouter();
@@ -28,18 +31,33 @@ export default function Page() {
   if (isAuthenticated) return null;
 
   return (
-    <div className={'flex w-full justify-center flex-col items-center pt-24'}>
+    <div className={'h-screen'}>
       <Head>
         <title>harmon.ie Login</title>
       </Head>
-      <Button
-        label="Sign in with Microsoft"
-        onClick={() => instance.loginRedirect()}
-        theme="white"
-        icon="FacebookIcon"
-        iconPosition="before"
-        as="button"
-      />
+      <Nav showUserMenu={false} />
+      <div className="w-full h-full fixed top-o left-0 justify-center text-center overflow-auto flex">
+        <div className="flex flex-col gap-6 items-center px-2 justify-center text-center lg:w-4/12">
+          <div>
+            <Icon name="HarmonieIcon" className="w-12 h-12" />
+          </div>
+          <Title size="lg" className="text-indigo-500 font-extrabold">
+            Sign in to the harmon.ie Customer Portal{' '}
+          </Title>
+          <Button
+            label="Sign in with Microsoft"
+            onClick={() => instance.loginRedirect()}
+            theme="white"
+            icon="MicrosoftIcon"
+            iconPosition="before"
+            as="button"
+            stretch
+          />
+        </div>
+      </div>
+      <div className="fixed bottom-0 h-24 w-full flex items-center justify-center bg-gray-50">
+        <p className="text-indigo-200">© harmon.ie 2022</p>
+      </div>
     </div>
   );
 }
