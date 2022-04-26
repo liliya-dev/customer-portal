@@ -31,13 +31,13 @@ export default function Page() {
   if (isAuthenticated) return null;
 
   return (
-    <div className={'h-screen'}>
+    <div>
       <Head>
         <title>harmon.ie Login</title>
       </Head>
       <Nav showUserMenu={false} />
       <div className="w-full h-full fixed top-o left-0 justify-center text-center overflow-auto flex">
-        <div className="flex flex-col gap-6 items-center px-2 justify-center text-center lg:w-4/12">
+        <div className="flex flex-col gap-6 items-center px-2 justify-center text-center w-11/12 md:w-3/6 xl:w-4/12 md:max-w-md">
           <div>
             <Icon name="HarmonieIcon" className="w-12 h-12" />
           </div>
