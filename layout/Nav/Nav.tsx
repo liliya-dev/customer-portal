@@ -15,26 +15,23 @@ export type NavProps = {
 };
 export const Nav = ({ showUserMenu = true }) => {
   const { screenWidth, breakpoint } = useBreakpoint();
-
-  const navRef = useRef(null);
-  const [spacerHeight, setSpacerHeight] = useState<number>(92);
+  const [openDesckMenu, setOpenDesckMenu] = useState(false);
   const [mobileNavIsOpen, setMobileNavIsOpen] = useState<boolean>(false);
   const isMobile = screenWidth < BREAKPOINTS.lg;
 
-  const onHamburgerClick = () => {
-    setMobileNavIsOpen(true);
+  const onHamburgerClick = (value) => {
+    setMobileNavIsOpen(value);
   };
-  useEffect(() => {
-    if (!navRef.current) return;
-    const navHeight = navRef.current.getBoundingClientRect().height;
-    setSpacerHeight(navHeight);
-  }, [navRef.current, breakpoint]);
+
+  const toggleDeskMenu = () => {
+    setOpenDesckMenu(!openDesckMenu);
+  };
 
   return (
     <div className="fixed top-0 w-full px-2 md:px-4">
       <nav
         className={
-          'flex gap-3 items-center py-2 md:py-3 lg:py-4 xl:py-5 px-1 border-b-2 border-indigo-50'
+          'flex gap-3 items-center py-4 xl:py-5 px-1 border-b-2 border-indigo-50'
         }
       >
         <NextLink href="/">
@@ -46,9 +43,17 @@ export const Nav = ({ showUserMenu = true }) => {
           Customer Portal
         </Title>
         {isMobile ? (
-          <MobileNav showHamburger={showUserMenu} />
+          <MobileNav
+            open={mobileNavIsOpen}
+            onHamburgerClick={onHamburgerClick}
+            showUserMenu={showUserMenu}
+          />
         ) : (
-          <TopNav showUserMenu={showUserMenu} />
+          <TopNav
+            showUserMenu={showUserMenu}
+            open={openDesckMenu}
+            onClickMenu={toggleDeskMenu}
+          />
         )}
       </nav>
     </div>

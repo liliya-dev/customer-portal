@@ -5,6 +5,8 @@ import { menuItems } from './LayoutOptions';
 import { useIsAuthenticated } from '@azure/msal-react';
 import { Button } from '../components/buttons/Button';
 import { Spinner } from '../components/loaders/Spinner';
+import { Nav } from './Nav/Nav';
+import { BREAKPOINTS, useBreakpoint } from '../hooks/useBreakpoint';
 
 export type CardProps = {
   children: React.ReactElement | React.ReactNode;
@@ -13,8 +15,9 @@ export type CardProps = {
 export const Layout = ({ children }) => {
   const router = useRouter();
   const { instance, inProgress } = useMsal();
+  const { screenWidth, breakpoint } = useBreakpoint();
   const isAuthenticated = useIsAuthenticated();
-
+  const isMobile = screenWidth < BREAKPOINTS.lg;
   useEffect(() => {
     if (!isAuthenticated && inProgress === 'none') {
       router.push('/');
@@ -32,22 +35,23 @@ export const Layout = ({ children }) => {
   if (!isAuthenticated) return null;
 
   return (
-    <div className="flex w-full p-16">
-      <div className="w-64">
-        {menuItems.map(({ title, id, icon }) => (
-          <Button
-            as="a"
-            href={`/portal/${id}`}
-            label={title}
-            theme="lightblue"
-            stretch
-            key={id}
-          />
-        ))}
-      </div>
-      <div className="p-16">
-        {children}
-        <Button label="signout" onClick={() => instance.logout()} as="button" />
+    <div className="h-screen overflow-hidden">
+      <Nav />
+      <div className="flex w-full h-full px-4  pt-20 lg:pt-20">
+        <div className="lg:w-64">
+          {!isMobile &&
+            menuItems.map(({ title, id, icon }) => (
+              <Button
+                as="a"
+                href={`/portal/${id}`}
+                label={title}
+                theme="lightblue"
+                stretch
+                key={id}
+              />
+            ))}
+        </div>
+        <div className="h-full">{children}</div>
       </div>
     </div>
   );
