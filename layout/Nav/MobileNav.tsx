@@ -1,5 +1,6 @@
 import React from 'react';
 import cx from 'classnames';
+import { useMsal } from '@azure/msal-react';
 import { useRouter } from 'next/router';
 
 import { Button } from '../../components/buttons/Button';
@@ -18,6 +19,7 @@ const responsiveButtonSizes: { [key: string]: SizeType } = {
 
 export const MobileNav = ({ showUserMenu = true, onHamburgerClick, open }) => {
   const router = useRouter();
+  const { instance, inProgress } = useMsal();
   const { breakpoint } = useBreakpoint();
   const responsiveButtonSize: SizeType = responsiveButtonSizes[breakpoint];
 
@@ -53,6 +55,12 @@ export const MobileNav = ({ showUserMenu = true, onHamburgerClick, open }) => {
         {open && (
           <FullScreenModal handleOutsideClick={onHamburgerClick}>
             {renderMenuList(menuItems)}
+            <div
+              className="py-4 px-12 text-indigo-500 w-full font-semibold border-t"
+              onClick={() => instance.logout()}
+            >
+              <p>Sign out</p>
+            </div>
           </FullScreenModal>
         )}
       </div>
