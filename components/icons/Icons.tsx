@@ -1,4 +1,6 @@
 import React from 'react';
+import * as HeroIcons from '@heroicons/react/outline';
+import * as StreamLineIcons from './StreamlineIcons';
 
 const FacebookIcon = ({ className }) => (
   <svg
@@ -337,6 +339,12 @@ export const Icons = {
   CloseIcon,
   MicrosoftIcon,
   Point,
+
+  // Complete hero icons set (maybe be more specific here and not import everything)
+  ...HeroIcons,
+
+  // Complete streamline icons set (maybe be more specific here and not import everything)
+  ...StreamLineIcons,
 };
 
 export type IconName = keyof typeof Icons;
