@@ -1,9 +1,10 @@
+import cx from 'classnames';
 import { useMsal } from '@azure/msal-react';
 import { useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { menuItems } from './LayoutOptions';
 import { useIsAuthenticated } from '@azure/msal-react';
-import { Button } from '../components/buttons/Button';
+import { Icon } from '../components/icons/Icon';
 import { Spinner } from '../components/loaders/Spinner';
 import { Nav } from './Nav/Nav';
 import { BREAKPOINTS, useBreakpoint } from '../hooks/useBreakpoint';
@@ -34,24 +35,30 @@ export const Layout = ({ children }) => {
 
   if (!isAuthenticated) return null;
 
-  return (
-    <div className="h-screen overflow-hidden">
-      <Nav />
-      <div className="flex w-full h-full px-4  pt-20 lg:pt-20">
-        <div className="lg:w-64">
-          {!isMobile &&
-            menuItems.map(({ title, id, icon }) => (
-              <Button
-                as="a"
-                href={`/portal/${id}`}
-                label={title}
-                theme="lightblue"
-                stretch
-                key={id}
-              />
-            ))}
+  const renderMenuList = (items) =>
+    items.map(({ title, icon, id }, i) => (
+      <button
+        key={i}
+        onClick={() => router.push(`/portal/${id}`)}
+        className={cx('py-4 px-12 text-indigo-500 w-full font-semibold', {
+          ['bg-indigo-50']: `/portal/${id}` === router.pathname,
+        })}
+      >
+        <div className="flex gap-4">
+          {icon && <Icon name={icon} className="w-6 h-6 " />}
+          {title}
         </div>
-        <div className="h-full">{children}</div>
+      </button>
+    ));
+
+  return (
+    <div className="h-screen overflow-hidden grid grid-rows-[62px_1fr] lg:grid-rows-[92px_1fr]">
+      <Nav />
+      <div className="w-full h-full">
+        <div className="bg-gray-50 fixed h-screen lg:w-80 lg:pt-4">
+          {!isMobile && renderMenuList(menuItems)}
+        </div>
+        <div className="lg:ml-80">{children}</div>
       </div>
     </div>
   );

@@ -1,5 +1,6 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import NextLink from 'next/link';
+import cx from 'classnames';
 
 import { BREAKPOINTS, useBreakpoint } from '../../hooks/useBreakpoint';
 
@@ -28,16 +29,15 @@ export const Nav = ({ showUserMenu = true }) => {
   };
 
   return (
-    <div className="fixed top-0 w-full px-2 md:px-4">
+    <div className="px-2 md:px-4">
       <nav
-        className={
-          'flex gap-3 items-center py-4 xl:py-5 px-1 border-b-2 border-indigo-50'
-        }
+        className={cx(
+          'flex gap-3 items-center py-2 xl:py-5 px-1 border-b-2 border-indigo-50',
+          { ['py-4']: !showUserMenu },
+        )}
       >
         <NextLink href="/">
-          <a>
-            {isMobile ? <LogoImageMobile className={'w-7 h-7'} /> : <LogoImage />}
-          </a>
+          <a>{isMobile ? <LogoImageMobile className="w-7 h-7" /> : <LogoImage />}</a>
         </NextLink>
         <Title className="text-indigo-200" size="xs">
           Customer Portal
