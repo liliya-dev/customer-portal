@@ -32,8 +32,7 @@ export const Nav = ({ showUserMenu = true }) => {
     <div className="px-2 md:px-4">
       <nav
         className={cx(
-          'flex gap-3 items-center py-2 xl:py-5 px-1 border-b-2 border-indigo-50',
-          { ['py-4']: !showUserMenu },
+          'flex gap-3 items-center h-full my-auto px-1 border-b-2 border-indigo-50',
         )}
       >
         <NextLink href="/">

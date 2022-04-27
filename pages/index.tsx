@@ -31,7 +31,7 @@ export default function Page() {
   if (isAuthenticated) return null;
 
   return (
-    <div className="h-screen overflow-hidden grid grid-rows-[62px_1fr_96px]">
+    <div className="h-screen overflow-hidden grid grid-rows-[62px_1fr_96px] lg:grid-rows-[92px_1fr_105px]">
       <Head>
         <title>harmon.ie Login</title>
       </Head>
