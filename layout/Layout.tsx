@@ -15,10 +15,11 @@ export type CardProps = {
 
 export const Layout = ({ children }) => {
   const router = useRouter();
-  const { instance, inProgress } = useMsal();
-  const { screenWidth, breakpoint } = useBreakpoint();
+  const { inProgress } = useMsal();
+  const { screenWidth } = useBreakpoint();
   const isAuthenticated = useIsAuthenticated();
   const isMobile = screenWidth < BREAKPOINTS.lg;
+
   useEffect(() => {
     if (!isAuthenticated && inProgress === 'none') {
       router.push('/');
@@ -52,13 +53,15 @@ export const Layout = ({ children }) => {
     ));
 
   return (
-    <div className="h-screen overflow-hidden grid grid-rows-[62px_1fr] lg:grid-rows-[92px_1fr]">
+    <div className="lg:h-screen overflow-hidden grid grid-rows-[62px_1fr] lg:grid-rows-[92px_1fr]">
       <Nav />
-      <div className="w-full h-full">
-        <div className="bg-gray-50 fixed h-screen lg:w-80 lg:pt-4">
-          {!isMobile && renderMenuList(menuItems)}
+      <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr]">
+        {!isMobile && (
+          <div className="bg-gray-50 lg:pt-4">{renderMenuList(menuItems)}</div>
+        )}
+        <div className="py-8 px-4 lg:pl-20 lg:pr-14 lg:pt-10 h-5/6 overflow-y-scroll lg:pb-0 text-indigo-500">
+          {children}
         </div>
-        <div className="lg:ml-80">{children}</div>
       </div>
     </div>
   );

@@ -3,7 +3,7 @@ import { Icon } from '../../components/icons/Icon';
 import { useMsal } from '@azure/msal-react';
 
 export const TopNav = ({ showUserMenu, open, onClickMenu }) => {
-  const { instance, inProgress } = useMsal();
+  const { instance, accounts } = useMsal();
 
   return (
     showUserMenu && (
@@ -15,7 +15,7 @@ export const TopNav = ({ showUserMenu, open, onClickMenu }) => {
           className="flex items-center gap-2 ml-3 text-indigo-500 cursor-pointer"
           onClick={onClickMenu}
         >
-          <p>Test User</p>
+          <p>{accounts[0]?.name}</p>
           {open ? (
             <Icon name="ChevronUpIcon" className="w-4 h-4" />
           ) : (

@@ -14,7 +14,7 @@ import { Title } from '../../components/title/Title';
 export type NavProps = {
   showUserMenu?: boolean;
 };
-export const Nav = ({ showUserMenu = true }) => {
+export const Nav = ({ showUserMenu = true }: NavProps) => {
   const { screenWidth, breakpoint } = useBreakpoint();
   const [openDesckMenu, setOpenDesckMenu] = useState(false);
   const [mobileNavIsOpen, setMobileNavIsOpen] = useState<boolean>(false);

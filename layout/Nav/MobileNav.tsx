@@ -19,7 +19,7 @@ const responsiveButtonSizes: { [key: string]: SizeType } = {
 
 export const MobileNav = ({ showUserMenu = true, onHamburgerClick, open }) => {
   const router = useRouter();
-  const { instance, inProgress } = useMsal();
+  const { instance, accounts } = useMsal();
   const { breakpoint } = useBreakpoint();
   const responsiveButtonSize: SizeType = responsiveButtonSizes[breakpoint];
 
@@ -55,11 +55,26 @@ export const MobileNav = ({ showUserMenu = true, onHamburgerClick, open }) => {
         {open && (
           <FullScreenModal handleOutsideClick={onHamburgerClick}>
             {renderMenuList(menuItems)}
-            <div
-              className="py-4 px-12 text-indigo-500 w-full font-semibold border-t"
-              onClick={() => instance.logout()}
-            >
-              <p>Sign out</p>
+            <div className="border-t">
+              <div className="flex py-4 px-12 gap-2">
+                <div className="flex">
+                  <Icon
+                    className="w-10 h-10 text-blue-500 font-semibold"
+                    name="UserCircle"
+                  />
+                </div>
+                <div>
+                  <p className="font-medium">{accounts[0]?.name}</p>
+                  <p className="text-indigo-300">{accounts[0]?.username}</p>
+                </div>
+              </div>
+              <div
+                className="flex gap-2 py-4 px-12 text-indigo-500 w-full"
+                onClick={() => instance.logout()}
+              >
+                <Icon name="LogoutIcon" className="w-8 h-8 text-indigo-200" />
+                <p>Sign out</p>
+              </div>
             </div>
           </FullScreenModal>
         )}
