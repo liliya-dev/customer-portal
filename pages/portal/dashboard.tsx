@@ -1,20 +1,13 @@
-import React, { useState } from 'react';
+import React from 'react';
+
 import { Layout } from '../../layout/Layout';
 import { Title } from '../../components/title/Title';
 import { Paper } from '../../components/paper/Paper';
 import { Link } from '../../components/buttons/Link';
 import { Icon } from '../../components/icons/Icon';
-import { Button } from '../../components/buttons/Button';
-import { Input } from '../../components/input/Input';
 import { Tabel } from '../../components/tabel/Tabel';
 
 export default function Page() {
-  const [isShowClearBtn, setIsShowClearBtn] = useState(false);
-  const [inputValue, setInputValue] = useState<string>('');
-
-  const handleClearInput = (e) => {
-    setInputValue('');
-  };
   return (
     <Layout>
       <Title size="lg" className="">
@@ -51,42 +44,6 @@ export default function Page() {
               </div>
             </div>
           </Paper>
-        </div>
-        <div className="flex flex-col lg:flex-row justify-between items-center">
-          <Title size="xs" className=" mb-5">
-            Users
-          </Title>
-          <div className="flex flex-col lg:flex-row gap-6">
-            <div className="relative">
-              <Icon
-                name="SearchIcon"
-                className="w-5 h-5 absolute text-indigo-300 top-3 left-3"
-              />
-              {isShowClearBtn && (
-                <div onClick={handleClearInput}>
-                  <Icon
-                    name="X"
-                    className="absolute top-3 right-3 cursor-pointer w-5 h-5 text-indigo-300"
-                  />
-                </div>
-              )}
-              <Input
-                name="search"
-                placeholder={'Search...'}
-                type="search"
-                id={'search'}
-                value={inputValue}
-                setValue={setInputValue}
-                className="text-indigo-300 py-2 pl-10 pr-7 font-normal w-80"
-              />
-            </div>
-            <Button
-              as="button"
-              label="Add User"
-              onClick={() => console.log('Add User')}
-              size="md"
-            />
-          </div>
         </div>
         <Tabel />
       </div>

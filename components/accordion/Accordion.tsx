@@ -14,7 +14,6 @@ export type AccordionProps = {
 };
 
 export const Accordion = ({ items }: AccordionProps) => {
-  console.log(items);
   if (!Boolean(items?.length)) return;
 
   return (

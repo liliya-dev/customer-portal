@@ -23,6 +23,7 @@ export const COLORS = {
   gray: '#e5e7eb',
   black: '#000',
   lightpurple: '#C8D4FF',
+  lightindigo: '#B3C5CC',
 };
 
 export const ALIGNMENTS = {

@@ -55,11 +55,11 @@ export const Layout = ({ children }) => {
   return (
     <div className="lg:h-screen overflow-hidden grid grid-rows-[62px_1fr] lg:grid-rows-[92px_1fr]">
       <Nav />
-      <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr]">
+      <div className="grid grid-cols-1 lg:grid-cols-[22.229vw_1fr]">
         {!isMobile && (
           <div className="bg-gray-50 lg:pt-4">{renderMenuList(menuItems)}</div>
         )}
-        <div className="py-8 px-4 lg:pl-20 lg:pr-14 lg:pt-10 h-5/6 overflow-y-scroll lg:pb-0 text-indigo-500">
+        <div className="py-8 px-4 lg:pl-20 lg:pr-14 lg:pt-10 overflow-auto lg:h-[91vh] lg:pb-0 text-indigo-500">
           {children}
         </div>
       </div>

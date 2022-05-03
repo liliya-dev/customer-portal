@@ -21,5 +21,6 @@ export const COLOR_OPTIONS = pick(
   'indigo',
   'darkblue',
   'gray',
+  'lightindigo',
 );
 export type ColorType = keyof typeof COLOR_OPTIONS;

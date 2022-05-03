@@ -16,7 +16,7 @@ export default function Page() {
 
   useEffect(() => {
     if (isAuthenticated && inProgress === 'none') {
-      router.push('/portal/users-licenses');
+      router.push('/portal/dashboard');
     }
   });
 

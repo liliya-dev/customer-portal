@@ -41,6 +41,8 @@ const bgClasses: Record<ColorType, string> = {
   indigo: 'bg-indigo-500 hover:bg-indigo-700 focus:bg-indigo-600 border-transparent',
   darkblue: 'bg-blue-700 hover:bg-blue-900 focus:bg-blue-800 border-transparent',
   gray: 'bg-gray-700 hover:bg-gray-900 focus:bg-gray-800 border-transparent',
+  lightindigo:
+    'bg-indigo-100 hover:bg-blue-500 hover:bg-blue-500 border-transparent',
 };
 
 const bgCurrentClasses: Record<ColorType, string> = {
@@ -53,6 +55,7 @@ const bgCurrentClasses: Record<ColorType, string> = {
   indigo: 'bg-indigo-600',
   darkblue: 'bg-blue-800',
   gray: 'bg-gray-800',
+  lightindigo: 'bg-indigo-100',
 };
 
 const textColorClasses: Record<ColorType, string> = {
@@ -65,6 +68,7 @@ const textColorClasses: Record<ColorType, string> = {
   indigo: 'text-white',
   darkblue: 'text-white',
   gray: 'text-white',
+  lightindigo: 'text-white',
 };
 
 const textColorCurrentClasses: Record<ColorType, string> = {
@@ -77,6 +81,7 @@ const textColorCurrentClasses: Record<ColorType, string> = {
   indigo: 'text-white',
   darkblue: 'text-white',
   gray: 'text-white',
+  lightindigo: 'text-white',
 };
 
 const plainTextColorClasses: Record<ColorType, string> = {

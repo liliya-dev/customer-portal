@@ -12,9 +12,9 @@ export const formatDate = (
   return date.toLocaleDateString(
     locale || 'en-US',
     format || {
-      year: 'numeric',
-      month: 'long',
       day: 'numeric',
+      month: 'numeric',
+      year: 'numeric',
     },
   );
 };
