@@ -1,9 +1,28 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
+
 import { Paper } from '../paper/Paper';
 import { Icon } from '../icons/Icon';
 import { formatDate } from '../../helpers/utils/date';
+import { truncate } from '../../helpers/utils/string';
+import { UserType } from '../../types';
 
-type SortOrder = 'ascn' | 'desc';
+export type DeskTabelProps = {
+  items: UserType[];
+  handleSelectAll: (e: any) => void;
+  isCheckAll: boolean;
+  setActiveUser: React.Dispatch<React.SetStateAction<string>>;
+  activeUser: string;
+  handelCheckbox: (e: any) => void;
+  isCheck: string[];
+  setIsModuleOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setModalNameOpen: React.Dispatch<React.SetStateAction<string>>;
+  sortedFrom: string;
+  setSortedFrom: React.Dispatch<React.SetStateAction<string>>;
+  pageNumber: number;
+  decrementPage: () => void;
+  incrementPage: () => void;
+  pagesInfo: { total: number; maxPage: number; perPage: number }[];
+};
 
 export const DeskTabel = ({
   items,
@@ -13,29 +32,19 @@ export const DeskTabel = ({
   activeUser,
   handelCheckbox,
   isCheck,
-  handelModal,
-}) => {
-  const [sortedFrom, setSortedFrom] = useState<SortOrder>('desc');
-  const [showMenu, setShowMenu] = useState(false);
-
-  useEffect(() => {
-    switch (sortedFrom) {
-      case 'desc':
-        items.sort((a, b) => b.name - a.name);
-        break;
-
-      case 'ascn':
-        items.sort((a, b) => a.name - b.name);
-        break;
-
-      default:
-        items.sort((a, b) => b.name - a.name);
-        break;
-    }
-  }, [sortedFrom, items]);
-
+  setIsModuleOpen,
+  setModalNameOpen,
+  sortedFrom,
+  setSortedFrom,
+  pageNumber,
+  decrementPage,
+  incrementPage,
+  pagesInfo,
+}: DeskTabelProps) => {
+  const [showMenu, setShowMenu] = useState<boolean>(false);
+  console.log(items);
   const handelSortBtn = () =>
-    sortedFrom === 'desc' ? setSortedFrom('ascn') : setSortedFrom('desc');
+    sortedFrom === 'desc' ? setSortedFrom('asc') : setSortedFrom('desc');
 
   const trElement = useCallback(
     (items) =>
@@ -75,24 +84,42 @@ export const DeskTabel = ({
             <td className="px-6 py-4 text-indigo-300">
               {formatDate(lastActiveDate)}
             </td>
-            <td className="px-6 py-4 text-indigo-300 cursor-pointer">
+            <td className="px-6 py-4 text-indigo-300 cursor-pointer md:w-24 lg:w-28">
               {showMenu && activeUser === _id ? (
-                <div className="flex justify-around">
-                  <div onClick={handelModal}>
+                <div className="flex justify-around ">
+                  <div
+                    onClick={() => {
+                      setIsModuleOpen(true);
+                      setModalNameOpen('edit');
+                    }}
+                  >
                     <Icon name="PencilIcon" className="w-6 h-6 text-blue-500" />
                   </div>
-                  <div onClick={handelModal}>
+                  <div
+                    onClick={() => {
+                      setIsModuleOpen(true);
+                      setModalNameOpen('delete');
+                    }}
+                  >
                     <Icon name="TrashIcon" className="w-6 h-6 text-blue-500" />
                   </div>
                 </div>
               ) : (
-                <p>{role}</p>
+                <p>{truncate(role, 10)}</p>
               )}
             </td>
           </tr>
         );
       }),
-    [activeUser, isCheck, showMenu],
+    [
+      activeUser,
+      handelCheckbox,
+      isCheck,
+      setActiveUser,
+      setIsModuleOpen,
+      setModalNameOpen,
+      showMenu,
+    ],
   );
   return (
     <Paper>
@@ -123,9 +150,9 @@ export const DeskTabel = ({
                   <p>Name</p>
 
                   {sortedFrom === 'desc' ? (
-                    <Icon name="ChevronDownIcon" className="w-6 h-6" />
-                  ) : (
                     <Icon name="ChevronUpIcon" className="w-6 h-6" />
+                  ) : (
+                    <Icon name="ChevronDownIcon" className="w-6 h-6" />
                   )}
                 </div>
               </th>
@@ -142,6 +169,41 @@ export const DeskTabel = ({
           </thead>
           <tbody>{Boolean(items.length > 0) && trElement(items)}</tbody>
         </table>
+        {items.length > 0 && pagesInfo[0].maxPage > 0 && (
+          <div className="py-3 px-6 bg-white mb-4 shadow-md border-b">
+            <div className="flex justify-between items-center">
+              <p>
+                Showing {pageNumber + 1} to {pagesInfo[0].perPage} of{' '}
+                {pagesInfo[0].total} results
+              </p>
+              <div className="flex gap-3">
+                {isCheck.length > 0 && (
+                  <div
+                    onClick={() => {
+                      setModalNameOpen('deleteAll');
+                      setIsModuleOpen(true);
+                    }}
+                    className="py-2 px-4 border border-indigo-200 text-indigo-500 font-medium cursor-pointer"
+                  >
+                    Delete Users
+                  </div>
+                )}
+                <div
+                  onClick={decrementPage}
+                  className="py-2 px-4 border border-indigo-200 text-indigo-500 font-medium cursor-pointer"
+                >
+                  Previous
+                </div>
+                <div
+                  onClick={incrementPage}
+                  className="py-2 px-4 border border-indigo-200 text-indigo-500 font-medium cursor-pointer"
+                >
+                  Next
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </Paper>
   );

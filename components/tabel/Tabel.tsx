@@ -1,30 +1,42 @@
 import { useMsal } from '@azure/msal-react';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 
+import { useDebounce } from '../../hooks/useDebounce';
 import { DeskTabel } from './DeskTabel';
 import { MobileTabel } from './MobileTabel';
-import { Icon } from '../icons/Icon';
 import { Button } from '../../components/buttons/Button';
-import { Input } from '../../components/input/Input';
 import { Title } from '../title/Title';
-import { AddUserForm, EditUserForm, DeleteUserForm } from '../form/Form';
+import { Search } from '../search/Search';
+import {
+  AddUserForm,
+  EditUserForm,
+  DeleteUserForm,
+  DeleteUsersForm,
+} from '../form/Form';
 import { BREAKPOINTS, useBreakpoint } from '../../hooks/useBreakpoint';
 import { Dialog } from '../../components/dialog/Dialog';
 
 import DataAPI from '../../api/data';
 
 const dataAPI = new DataAPI();
+export type SortOrder = 'asc' | 'desc';
 
 export const Tabel = () => {
   const { accounts } = useMsal();
   const [usersList, setUsersList] = useState([]);
-  const [activeUser, setActiveUser] = useState('');
-  const [isCheckAll, setIsCheckAll] = useState(false);
-  const [isModuleOpen, setIsModuleOpen] = useState(false);
-  const [isCheck, setIsCheck] = useState([]);
-  const [isShowClearBtn, setIsShowClearBtn] = useState(false);
+  const [activeUser, setActiveUser] = useState<string>('');
+  const [isCheckAll, setIsCheckAll] = useState<boolean>(false);
+  const [isModuleOpen, setIsModuleOpen] = useState<boolean>(false);
+  const [isCheck, setIsCheck] = useState<string[]>([]);
+  const [modalNameOpen, setModalNameOpen] = useState<
+    'edit' | 'add' | 'delete' | 'deleteAll'
+  >('add');
   const [inputValue, setInputValue] = useState<string>('');
-  const { screenWidth, breakpoint } = useBreakpoint();
+  const [pageNumber, setPageNumber] = useState<number>(0);
+  const [pagesInfo, setPagesInfo] = useState([]);
+  const [sortedFrom, setSortedFrom] = useState<SortOrder>('asc');
+  const { screenWidth } = useBreakpoint();
+  const debouncedWindowWidth = useDebounce(inputValue, 500);
   const isMobile = screenWidth < BREAKPOINTS.md;
   const storadgeKey = `${accounts[0].homeAccountId}-${accounts[0].environment}-idtoken-${accounts[0].idTokenClaims['aud']}-${accounts[0].tenantId}---`;
   const token = JSON.parse(sessionStorage.getItem(storadgeKey)).secret;
@@ -34,41 +46,131 @@ export const Tabel = () => {
       const response = await dataAPI.getUsers({
         tid: accounts[0]?.tenantId,
         token,
-        query: 'new',
-        page: 0,
-        perPage: 10,
+        query: debouncedWindowWidth,
+        page: pageNumber,
+        perPage: isMobile ? 6 : 10,
         orderedby: 'name',
-        direction: 'asc',
+        direction: sortedFrom,
       });
       console.log(response);
+      setPagesInfo([
+        {
+          maxPage: response.total / response.perPage - 1,
+          total: response.total,
+          perPage: Number(response.perPage),
+        },
+      ]);
       setUsersList(response.users);
     };
     getUsersData();
-  }, [accounts, token]);
+  }, [accounts, debouncedWindowWidth, isMobile, pageNumber, sortedFrom, token]);
 
-  const addUser = async () => {
-    const response = await dataAPI.addUser({
-      tid: accounts[0]?.tenantId,
-      token,
-      body: {
-        department: 'Accounting and Finance',
-        license: 'FREE',
-        role: 'ORGANIZATION_EXTERNAL_USER',
-        email: 'ivan@harmon.ie',
-        name: 'Ivan Ivan',
-      },
-    });
-    console.log(response);
-  };
+  const addUser = useCallback(
+    async ({ name, email, role }) => {
+      const response = await dataAPI.addUser({
+        tid: accounts[0]?.tenantId,
+        token,
+        body: {
+          department: 'Production',
+          license: 'FREE',
+          role,
+          email,
+          name,
+        },
+      });
+      if (response.status === 200) {
+        setIsModuleOpen(false);
+      }
+      console.log(response, role, name, email);
+    },
+    [accounts, token],
+  );
 
-  const handelModal = (e) => {
-    console.dir(e.currentTarget);
-    setIsModuleOpen(!isModuleOpen);
-  };
+  const editUser = useCallback(
+    async ({ name, email, role, id, department }) => {
+      const response = await dataAPI.editUser({
+        tid: accounts[0]?.tenantId,
+        token,
+        userId: id,
+        body: {
+          name,
+          email,
+          role,
+          department,
+        },
+      });
+      if (response.status === 200) {
+        setIsModuleOpen(false);
+      }
+      console.log(response.status, name, email, role);
+    },
+    [accounts, token],
+  );
 
-  const handleClearInput = (e) => {
-    setInputValue('');
-  };
+  const deleteUser = useCallback(
+    async ({ id }) => {
+      console.log(id);
+      const response = await dataAPI.deleteUser({
+        tid: accounts[0]?.tenantId,
+        token,
+        userId: id,
+      });
+      if (response.status === 200) {
+        setIsModuleOpen(false);
+      }
+      console.log(response, id);
+    },
+    [accounts, token],
+  );
+
+  const incrementPage = () =>
+    pagesInfo[0].maxPage !== pageNumber ? setPageNumber(pageNumber + 1) : null;
+
+  const decrementPage = () =>
+    pageNumber !== 0 ? setPageNumber(pageNumber - 1) : null;
+
+  const openFormNamed = useCallback(() => {
+    switch (modalNameOpen) {
+      case 'add':
+        return <AddUserForm onSubmit={addUser} />;
+      case 'edit':
+        return (
+          <EditUserForm
+            setIsModuleOpen={setIsModuleOpen}
+            user={usersList.filter((item) => item._id === activeUser)}
+            onSubmit={editUser}
+          />
+        );
+      case 'delete':
+        return (
+          <DeleteUserForm
+            setIsModuleOpen={setIsModuleOpen}
+            onSubmit={deleteUser}
+            activeUser={activeUser}
+          />
+        );
+      case 'deleteAll':
+        return (
+          <DeleteUsersForm
+            isCheck={isCheck}
+            setIsModuleOpen={setIsModuleOpen}
+            onSubmit={deleteUser}
+            isCheckAll={isCheckAll}
+          />
+        );
+      default:
+        break;
+    }
+  }, [
+    activeUser,
+    addUser,
+    deleteUser,
+    editUser,
+    isCheck,
+    isCheckAll,
+    modalNameOpen,
+    usersList,
+  ]);
 
   const handleSelectAll = (e) => {
     setIsCheckAll(!isCheckAll);
@@ -80,6 +182,7 @@ export const Tabel = () => {
 
   const handelCheckbox = (e) => {
     const { id, checked } = e.target;
+
     setIsCheck([...isCheck, id]);
     if (!checked) {
       setIsCheck(isCheck.filter((item) => item !== id));
@@ -87,60 +190,65 @@ export const Tabel = () => {
   };
 
   return (
-    <div className="">
-      <div className="flex flex-col lg:flex-row justify-between items-center mb-5">
-        <Title size="xs" className=" mb-5">
+    <div>
+      <div className="flex flex-col lg:flex-row justify-between lg:items-center mb-5">
+        <Title size="xs" className="mb-5">
           Users
         </Title>
-        <div className="flex flex-col lg:flex-row gap-6">
-          <div className="relative">
-            <Icon
-              name="SearchIcon"
-              className="w-5 h-5 absolute text-indigo-300 top-3 left-3"
-            />
-            {isShowClearBtn && (
-              <div onClick={handleClearInput}>
-                <Icon
-                  name="X"
-                  className="absolute top-3 right-3 cursor-pointer w-5 h-5 text-indigo-300"
-                />
-              </div>
-            )}
-            <Input
-              name="search"
-              placeholder={'Search...'}
-              type="search"
-              id={'search'}
-              value={inputValue}
-              setValue={setInputValue}
-              className="text-indigo-300 py-2 pl-10 pr-7 font-normal w-80"
-            />
-          </div>
+        <div className="flex flex-rows gap-3 lg:gap-6 justify-end">
+          <Search
+            inputValue={inputValue}
+            setInputValue={setInputValue}
+            isMobile={isMobile}
+          />
           <Button
             as="button"
             label="Add User"
-            onClick={handelModal}
+            onClick={() => {
+              setModalNameOpen('add');
+              setIsModuleOpen(!isModuleOpen);
+            }}
             size="md"
             key={'add'}
           />
         </div>
       </div>
       {isMobile ? (
-        <MobileTabel items={usersList} />
+        <MobileTabel
+          items={usersList}
+          setActiveUser={setActiveUser}
+          setModalNameOpen={setModalNameOpen}
+          setIsModuleOpen={setIsModuleOpen}
+          handleSelectAll={handleSelectAll}
+          handelCheckbox={handelCheckbox}
+          isCheck={isCheck}
+          isCheckAll={isCheckAll}
+          pageNumber={pageNumber}
+          decrementPage={decrementPage}
+          incrementPage={incrementPage}
+          pagesInfo={pagesInfo}
+        />
       ) : (
         <DeskTabel
           activeUser={activeUser}
           handelCheckbox={handelCheckbox}
-          handelModal={handelModal}
+          setIsModuleOpen={setIsModuleOpen}
           handleSelectAll={handleSelectAll}
           isCheck={isCheck}
           isCheckAll={isCheckAll}
           items={usersList}
           setActiveUser={setActiveUser}
+          setModalNameOpen={setModalNameOpen}
+          setSortedFrom={setSortedFrom}
+          sortedFrom={sortedFrom}
+          pageNumber={pageNumber}
+          decrementPage={decrementPage}
+          incrementPage={incrementPage}
+          pagesInfo={pagesInfo}
         />
       )}
       <Dialog mode="form" onOpenChange={setIsModuleOpen} open={isModuleOpen}>
-        <AddUserForm />
+        {openFormNamed()}
       </Dialog>
     </div>
   );

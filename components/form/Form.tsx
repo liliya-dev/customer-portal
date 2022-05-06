@@ -1,20 +1,49 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import { Title } from '../title/Title';
 import { Button } from '../buttons/Button';
+import { UserType } from '../../types';
 
-export type AddUserFormValue = {
-  FirstName?: string;
-  LastName?: string;
-  Email?: string;
-  Role?: string;
+export type SubmitFormValue = {
+  name?: string;
+  email?: string;
+  role?: string;
+  department?: string;
 };
 const roleList = ['Member', 'Owner'];
-export type AddUsersFromProps = {};
+const departmentList = [
+  'Research and Development',
+  'Marketing',
+  'Accounting and Finance',
+  'Production',
+];
+export type AddUsersFormProps = {
+  onSubmit: (e: React.FormEvent) => SubmitFormValue;
+};
 
-export const AddUserForm = () => {
+export type EditUsersProps = {
+  onSubmit: (e: React.FormEvent) => SubmitFormValue;
+  setIsModuleOpen: boolean;
+  user: UserType;
+};
+
+export const AddUserForm = ({ onSubmit }) => {
   return (
-    <form className="inline-block w-550 max-w-full">
+    <form
+      className="inline-block w-550 max-w-full"
+      onSubmit={(e) => {
+        e.preventDefault();
+
+        const form: HTMLFormElement = e.currentTarget;
+        const newName = `${form.FirstName.value} ${form.LastName.value}`;
+        onSubmit({
+          name: newName,
+          email: form.Email.value,
+          role: form.Role.value,
+          department: form.Department.value,
+        });
+      }}
+    >
       <div className="shadow-xl bg-white border border-black border-opacity-5 text-center  px-8 py-4 lg:px-16 lg:py-10">
         <Title size="lg">Add User</Title>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4  my-8 lg:my-16">
@@ -47,7 +76,7 @@ export const AddUserForm = () => {
           </div>
           <div>
             <select
-              name="role"
+              name="Role"
               id="role"
               className="border bg-white border-indigo-50 placeholder-indigo-300 md:text-base w-full"
             >
@@ -59,13 +88,24 @@ export const AddUserForm = () => {
               ))}
             </select>
           </div>
+          <div className="lg:col-span-2 ">
+            <select
+              name="Department"
+              id="department"
+              className="border bg-white border-indigo-50 placeholder-indigo-300 md:text-base w-full"
+            >
+              <option>Department</option>
+              {departmentList.map((dept, i) => (
+                <option key={i}>{dept}</option>
+              ))}
+            </select>
+          </div>
         </div>
         <Button
           label="Add"
-          onClick={() => console.log('add SUer')}
           theme="lightindigo"
           iconPosition="before"
-          as="button"
+          as="submit"
           size="sm"
           stretch
         />
@@ -74,12 +114,37 @@ export const AddUserForm = () => {
   );
 };
 
-export const EditUserForm = () => {
+export const EditUserForm = ({ setIsModuleOpen, user, onSubmit }) => {
+  const { name, email, _id, department } = user[0];
+  const newName = name.split(' ');
+
+  const [firstName, setFirstName] = useState(name ? newName[0] : '');
+  const [lastName, setLastName] = useState(name ? newName[1] : '');
+  const [emailUser, setEmailUser] = useState(email ? email : '');
+  const [roleUser, setRoleUser] = useState('Member');
+  const [departUser, setDepartUser] = useState(
+    department ? department : 'Department',
+  );
+
   return (
-    <form className="inline-block w-550 max-w-full">
-      <div className="shadow-xl bg-white border border-black border-opacity-5 text-center px-16 py-10">
-        <Title size="lg">Add User</Title>
-        <div className="grid grid-cols-2 gap-4 my-16">
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        const form = e.currentTarget;
+
+        onSubmit({
+          name: `${form.FirstName.value} ${form.LastName.value}`,
+          email: emailUser,
+          role: roleUser,
+          id: _id,
+          department: departUser,
+        });
+      }}
+      className="inline-block w-550 max-w-full"
+    >
+      <div className="shadow-xl bg-white border border-black border-opacity-5 text-center px-8 py-4 lg:px-16 lg:py-10">
+        <Title size="lg">Edit User</Title>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 my-8 lg:my-16">
           <div>
             <input
               required
@@ -87,6 +152,8 @@ export const EditUserForm = () => {
               name="FirstName"
               placeholder="First name *"
               className="border bg-white border-indigo-50 placeholder-indigo-300 md:text-base w-full"
+              value={firstName}
+              onChange={({ target }) => setFirstName(target.value)}
             />
           </div>
           <div>
@@ -96,6 +163,8 @@ export const EditUserForm = () => {
               name="LastName"
               placeholder="Last name *"
               className="border bg-white border-indigo-50 placeholder-indigo-300 md:text-base w-full"
+              value={lastName}
+              onChange={({ target }) => setLastName(target.value)}
             />
           </div>
           <div>
@@ -105,6 +174,8 @@ export const EditUserForm = () => {
               name="Email"
               placeholder="E-mail *"
               className="border bg-white border-indigo-50 placeholder-indigo-300 md:text-base w-full"
+              value={emailUser}
+              onChange={({ target }) => setEmailUser(target.value)}
             />
           </div>
           <div>
@@ -112,6 +183,8 @@ export const EditUserForm = () => {
               name="role"
               id="role"
               className="border bg-white border-indigo-50 placeholder-indigo-300 md:text-base w-full"
+              value={roleUser}
+              onChange={({ target }) => setRoleUser(target.value)}
             >
               <option value="">Role</option>
               {roleList.map((role, i) => (
@@ -121,34 +194,106 @@ export const EditUserForm = () => {
               ))}
             </select>
           </div>
+          <div className="lg:col-span-2 ">
+            <select
+              name="Department"
+              id="department"
+              className="border bg-white border-indigo-50 placeholder-indigo-300 md:text-base w-full"
+              onChange={({ target }) => setDepartUser(target.value)}
+            >
+              <option value="">{departUser}</option>
+              {departmentList.map((dept, i) => (
+                <option key={i}>{dept}</option>
+              ))}
+            </select>
+          </div>
         </div>
-        <Button
-          label="Add"
-          onClick={() => console.log('add SUer')}
-          theme="lightindigo"
-          iconPosition="before"
-          as="button"
-          size="sm"
-          stretch
-        />
+        <div className="flex flex-rows gap-6 content-center">
+          <Button
+            label="Discard"
+            onClick={() => setIsModuleOpen(false)}
+            theme="lightindigo"
+            as="button"
+            size="sm"
+            stretch
+          />
+          <Button label="Save" theme="lightindigo" as="submit" size="sm" stretch />
+        </div>
       </div>
     </form>
   );
 };
 
-export const DeleteUserForm = () => {
+export const DeleteUserForm = ({ setIsModuleOpen, activeUser, onSubmit }) => {
+  console.log(activeUser);
   return (
-    <form className="inline-block w-550 max-w-full">
-      <div className="shadow-xl bg-white border border-black border-opacity-5 text-center px-16 py-10">
+    <form
+      className="inline-block lg:w-[45vw]"
+      onSubmit={(e) => {
+        e.preventDefault();
+        onSubmit({ id: activeUser });
+      }}
+    >
+      <div className="shadow-xl bg-white border border-black border-opacity-5 text-center px-8 py-4 lg:px-16 lg:py-10">
         <Title size="lg">Delete User</Title>
-        <p>Permanenly delete this user? This can’t undo this.</p>
-        <div className="flex gap-2">
-          <Button label="Cancel" />
-          <Button label="Delete" />
+        <p className="my-10 text-left font-normal leading-8">
+          Permanenly delete this user? This can’t undo this.
+        </p>
+        <div className="flex flex-rows gap-6 content-center">
+          <Button
+            label="Cancel"
+            onClick={() => setIsModuleOpen(false)}
+            theme="lightindigo"
+            as="button"
+            size="sm"
+            stretch
+          />
+          <Button label="Delete" theme="lightindigo" as="submit" size="sm" stretch />
         </div>
       </div>
     </form>
   );
 };
 
-export const DeleteUsersForm = () => {};
+export const DeleteUsersForm = ({
+  setIsModuleOpen,
+  isCheck,
+  isCheckAll,
+  onSubmit,
+}) => {
+  return (
+    <form
+      className="inline-block lg:w-[45vw]"
+      onSubmit={(e) => {
+        e.preventDefault();
+        console.log(isCheck);
+        isCheck.map((id) => onSubmit({ id }));
+      }}
+    >
+      <div className="shadow-xl bg-white border border-black border-opacity-5 text-center px-8 py-4 lg:px-16 lg:py-10">
+        <Title size="lg">Delete Users</Title>
+        {isCheckAll ? (
+          <p className="my-10 text-left font-normal leading-8">
+            Permanenly delete all this users? This can’t undo this.
+          </p>
+        ) : (
+          <p className="my-10 text-left font-normal leading-8">
+            Permanenly delete {isCheck.length} users? This can’t undo this.
+          </p>
+        )}
+
+        <div className="flex flex-rows gap-6 content-center">
+          <Button
+            label="Cancel"
+            onClick={() => setIsModuleOpen(false)}
+            theme="lightindigo"
+            as="button"
+            size="sm"
+            stretch
+          />
+          <Button label="Delete" theme="lightindigo" as="submit" size="sm" stretch />
+        </div>
+      </div>
+    </form>
+  );
+};

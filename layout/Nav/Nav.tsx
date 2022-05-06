@@ -7,7 +7,7 @@ import { BREAKPOINTS, useBreakpoint } from '../../hooks/useBreakpoint';
 import LogoImageMobile from '../../public/logo-icon.svg';
 import LogoImage from '../../public/logo.svg';
 
-import { TopNav } from './TopNav';
+import { DeskNav } from './DeskNav';
 import { MobileNav } from './MobileNav';
 import { Title } from '../../components/title/Title';
 
@@ -15,7 +15,7 @@ export type NavProps = {
   showUserMenu?: boolean;
 };
 export const Nav = ({ showUserMenu = true }: NavProps) => {
-  const { screenWidth, breakpoint } = useBreakpoint();
+  const { screenWidth } = useBreakpoint();
   const [openDesckMenu, setOpenDesckMenu] = useState(false);
   const [mobileNavIsOpen, setMobileNavIsOpen] = useState<boolean>(false);
   const isMobile = screenWidth < BREAKPOINTS.lg;
@@ -48,7 +48,7 @@ export const Nav = ({ showUserMenu = true }: NavProps) => {
             showUserMenu={showUserMenu}
           />
         ) : (
-          <TopNav
+          <DeskNav
             showUserMenu={showUserMenu}
             open={openDesckMenu}
             onClickMenu={toggleDeskMenu}

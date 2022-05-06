@@ -1,5 +1,8 @@
 import React from 'react';
 
-export const Paper = ({ children }) => {
+export type PaperProps = {
+  children: React.ReactElement | React.ReactNode;
+};
+export const Paper = ({ children }: PaperProps) => {
   return <div className="bg-white shadow-lg">{children}</div>;
 };

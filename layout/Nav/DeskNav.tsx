@@ -2,7 +2,13 @@ import React from 'react';
 import { Icon } from '../../components/icons/Icon';
 import { useMsal } from '@azure/msal-react';
 
-export const TopNav = ({ showUserMenu, open, onClickMenu }) => {
+export type DeskNav = {
+  showUserMenu: boolean;
+  open: boolean;
+  onClickMenu: (e: any) => void;
+};
+
+export const DeskNav = ({ showUserMenu, open, onClickMenu }: DeskNav) => {
   const { instance, accounts } = useMsal();
 
   return (

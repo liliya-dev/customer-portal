@@ -16,8 +16,17 @@ const responsiveButtonSizes: { [key: string]: SizeType } = {
   xl: 'md',
   '2xl': 'lg',
 };
+export type MobileNavProps = {
+  showUserMenu: boolean;
+  onHamburgerClick: (e: any) => void;
+  open: boolean;
+};
 
-export const MobileNav = ({ showUserMenu = true, onHamburgerClick, open }) => {
+export const MobileNav = ({
+  showUserMenu = true,
+  onHamburgerClick,
+  open,
+}: MobileNavProps) => {
   const router = useRouter();
   const { instance, accounts } = useMsal();
   const { breakpoint } = useBreakpoint();
