@@ -1,11 +1,11 @@
 import React from 'react';
 
-import { Layout } from '../../layout/Layout';
+import { LayoutMemo as Layout } from '../../layout/Layout';
 import { Title } from '../../components/title/Title';
 import { Paper } from '../../components/paper/Paper';
 import { Link } from '../../components/buttons/Link';
 import { Icon } from '../../components/icons/Icon';
-import { Tabel } from '../../components/tabel/Tabel';
+import { TabelMemo as Tabel } from '../../components/tabel/Tabel';
 
 export default function Page() {
   return (

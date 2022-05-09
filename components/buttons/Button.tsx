@@ -94,6 +94,7 @@ const plainTextColorClasses: Record<ColorType, string> = {
   indigo: 'text-indigo-500 hover:text-indigo-700 focus:text-indigo-600',
   darkblue: 'text-darkblue-700 hover:text-darkblue-900 focus:text-darkblue-800',
   gray: 'text-gray-700 hover:text-gray-900 focus:text-gray-800',
+  lightindigo: 'text-indigo-100 hover:text-blue-500 hover:text-blue-500',
 };
 
 const plainTextCurrentColorClasses: Record<ColorType, string> = {
@@ -106,6 +107,7 @@ const plainTextCurrentColorClasses: Record<ColorType, string> = {
   indigo: 'text-indigo-700',
   darkblue: 'text-darkblue-800',
   gray: 'text-gray-800',
+  lightindigo: 'text-white',
 };
 
 const sizeClasses: Record<SizeType, string> = {

@@ -2,30 +2,15 @@ import React, { useState } from 'react';
 
 import { Title } from '../title/Title';
 import { Button } from '../buttons/Button';
-import { UserType } from '../../types';
 
-export type SubmitFormValue = {
-  name?: string;
-  email?: string;
-  role?: string;
-  department?: string;
-};
 const roleList = ['Member', 'Owner'];
+
 const departmentList = [
   'Research and Development',
   'Marketing',
   'Accounting and Finance',
   'Production',
 ];
-export type AddUsersFormProps = {
-  onSubmit: (e: React.FormEvent) => SubmitFormValue;
-};
-
-export type EditUsersProps = {
-  onSubmit: (e: React.FormEvent) => SubmitFormValue;
-  setIsModuleOpen: boolean;
-  user: UserType;
-};
 
 export const AddUserForm = ({ onSubmit }) => {
   return (

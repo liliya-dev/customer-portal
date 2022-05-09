@@ -2,20 +2,20 @@ import React from 'react';
 import { Icon } from '../../components/icons/Icon';
 import { useMsal } from '@azure/msal-react';
 
-export type DeskNav = {
+export type DeskNavProps = {
   showUserMenu: boolean;
   open: boolean;
   onClickMenu: (e: any) => void;
 };
 
-export const DeskNav = ({ showUserMenu, open, onClickMenu }: DeskNav) => {
+export const DeskNav = ({ showUserMenu, open, onClickMenu }: DeskNavProps) => {
   const { instance, accounts } = useMsal();
 
   return (
     showUserMenu && (
       <div className="flex items-center ml-auto mr-10">
         <div>
-          <Icon className="w-10 h-10 text-blue-500 " name="UserCircle" />
+          <Icon className="w-10 h-10 text-blue-500 " name="UserCircleBlue" />
         </div>
         <div
           className="flex items-center gap-2 ml-3 text-indigo-500 cursor-pointer"
@@ -43,3 +43,5 @@ export const DeskNav = ({ showUserMenu, open, onClickMenu }: DeskNav) => {
     )
   );
 };
+
+export const DeskNavMemo = React.memo(DeskNav);

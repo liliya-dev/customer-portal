@@ -1,6 +1,6 @@
 import cx from 'classnames';
 
-import { Layout } from '../../layout/Layout';
+import { LayoutMemo as Layout } from '../../layout/Layout';
 import { Title } from '../../components/title/Title';
 import { ArticleCard } from '../../components/cards/ArticleCard';
 import { Accordion } from '../../components/accordion/Accordion';

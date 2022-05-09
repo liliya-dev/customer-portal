@@ -7,7 +7,7 @@ import { Button } from '../components/buttons/Button';
 import { Title } from '../components/title/Title';
 import { Spinner } from '../components/loaders/Spinner';
 import { Icon } from '../components/icons/Icon';
-import { Nav } from '../layout/Nav/Nav';
+import { NavMemo as Nav } from '../layout/Nav/Nav';
 
 export default function Page() {
   const { instance, inProgress } = useMsal();

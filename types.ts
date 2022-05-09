@@ -7,9 +7,13 @@ export type UserType = {
 };
 
 export type UserFields = {
-  id: string;
+  _id: string;
   lastActiveDate: string;
 } & UserType;
+
+export type SortOrder = 'asc' | 'desc';
+
+export type StaticState = 'loading' | 'idle' | 'success' | 'error';
 
 export const COLORS = {
   blue: '#496fff',
@@ -67,42 +71,3 @@ export const FONT_WEIGHTS = {
   extrabold: 'Extrabold',
   black: 'Black',
 };
-
-export const IMAGE_TYPE_OPTIONS = {
-  screenshot: 'Screenshot',
-  photo: 'Photo',
-  logo: 'Logo',
-};
-
-export type ImageType = {
-  src: string;
-  width?: number;
-  height?: number;
-  type: keyof typeof IMAGE_TYPE_OPTIONS;
-  alt: string;
-  caption?: string;
-  crop?: {
-    _type: 'sanity.imageCrop';
-    bottom: number;
-    left: number;
-    right: number;
-    top: number;
-  };
-  hotspot?: {
-    _type: 'sanity.imageHotspot';
-    height: number;
-    width: number;
-    x: number;
-    y: number;
-  };
-};
-
-export const RATIOS = {
-  '1:1': 'Square',
-  '16:9': '16:9',
-  '2:1': 'Flat',
-  '13:8': '13:8',
-};
-
-export type RatioType = keyof typeof RATIOS;
-export type RatiosType = { [key in keyof typeof RATIOS]: string };

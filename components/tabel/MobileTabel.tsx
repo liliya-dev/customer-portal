@@ -73,7 +73,7 @@ export const MobileTabel = ({
             </div>
             <div className="py-2 whitespace-nowrap flex flex-col items-center gap-4">
               <div className="flex flex-rows items-center gap-4">
-                <Icon name="UserCircle" className="w-8 h-8" />
+                <Icon name="UserCircleBlue" className="w-8 h-8" />
                 <div className="flex flex-col">
                   <p className="text-indigo-500 font-medium">{name}</p>
                   <p className="text-indigo-300 font-normal">{email}</p>
@@ -194,3 +194,5 @@ export const MobileTabel = ({
     )
   );
 };
+
+export const MobileTabelMemo = React.memo(MobileTabel);

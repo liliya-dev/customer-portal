@@ -1,4 +1,4 @@
-import { Layout } from '../../layout/Layout';
+import { LayoutMemo as Layout } from '../../layout/Layout';
 import UserLicensesScene from '../../scenes/UsersLicensesScene';
 
 export default function Page() {

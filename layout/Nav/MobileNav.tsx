@@ -69,7 +69,7 @@ export const MobileNav = ({
                 <div className="flex">
                   <Icon
                     className="w-10 h-10 text-blue-500 font-semibold"
-                    name="UserCircle"
+                    name="UserCircleBlue"
                   />
                 </div>
                 <div>
@@ -91,3 +91,5 @@ export const MobileNav = ({
     )
   );
 };
+
+export const MobileNavMemo = React.memo(MobileNav);

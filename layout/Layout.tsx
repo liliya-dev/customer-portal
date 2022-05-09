@@ -1,4 +1,5 @@
 import cx from 'classnames';
+import React from 'react';
 import { useMsal } from '@azure/msal-react';
 import { useEffect } from 'react';
 import { useRouter } from 'next/router';
@@ -6,14 +7,14 @@ import { menuItems } from './LayoutOptions';
 import { useIsAuthenticated } from '@azure/msal-react';
 import { Icon } from '../components/icons/Icon';
 import { Spinner } from '../components/loaders/Spinner';
-import { Nav } from './Nav/Nav';
+import { NavMemo as Nav } from './Nav/Nav';
 import { BREAKPOINTS, useBreakpoint } from '../hooks/useBreakpoint';
 
 export type CardProps = {
   children: React.ReactElement | React.ReactNode;
 };
 
-export const Layout = ({ children }) => {
+export const Layout = ({ children }: CardProps) => {
   const router = useRouter();
   const { inProgress } = useMsal();
   const { screenWidth } = useBreakpoint();
@@ -66,3 +67,5 @@ export const Layout = ({ children }) => {
     </div>
   );
 };
+
+export const LayoutMemo = React.memo(Layout);

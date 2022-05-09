@@ -2,8 +2,8 @@ import { useMsal } from '@azure/msal-react';
 import React, { useState, useEffect, useCallback } from 'react';
 
 import { useDebounce } from '../../hooks/useDebounce';
-import { DeskTabel } from './DeskTabel';
-import { MobileTabel } from './MobileTabel';
+import { DeskTabelMemo as DeskTabel } from './DeskTabel';
+import { MobileTabelMemo as MobileTabel } from './MobileTabel';
 import { Button } from '../../components/buttons/Button';
 import { Title } from '../title/Title';
 import { Search } from '../search/Search';
@@ -15,15 +15,19 @@ import {
 } from '../form/Form';
 import { BREAKPOINTS, useBreakpoint } from '../../hooks/useBreakpoint';
 import { Dialog } from '../../components/dialog/Dialog';
+import { Spinner } from '../loaders/Spinner';
+import { SortOrder, UserFields, StaticState } from '../../types';
 
 import DataAPI from '../../api/data';
 
 const dataAPI = new DataAPI();
-export type SortOrder = 'asc' | 'desc';
 
 export const Tabel = () => {
   const { accounts } = useMsal();
-  const [usersList, setUsersList] = useState([]);
+  const { screenWidth } = useBreakpoint();
+
+  const [state, setState] = useState<StaticState>('idle');
+  const [usersList, setUsersList] = useState<UserFields[]>([]);
   const [activeUser, setActiveUser] = useState<string>('');
   const [isCheckAll, setIsCheckAll] = useState<boolean>(false);
   const [isModuleOpen, setIsModuleOpen] = useState<boolean>(false);
@@ -35,34 +39,41 @@ export const Tabel = () => {
   const [pageNumber, setPageNumber] = useState<number>(0);
   const [pagesInfo, setPagesInfo] = useState([]);
   const [sortedFrom, setSortedFrom] = useState<SortOrder>('asc');
-  const { screenWidth } = useBreakpoint();
+
   const debouncedWindowWidth = useDebounce(inputValue, 500);
   const isMobile = screenWidth < BREAKPOINTS.md;
   const storadgeKey = `${accounts[0].homeAccountId}-${accounts[0].environment}-idtoken-${accounts[0].idTokenClaims['aud']}-${accounts[0].tenantId}---`;
   const token = JSON.parse(sessionStorage.getItem(storadgeKey)).secret;
 
   useEffect(() => {
-    const getUsersData = async () => {
-      const response = await dataAPI.getUsers({
-        tid: accounts[0]?.tenantId,
-        token,
-        query: debouncedWindowWidth,
-        page: pageNumber,
-        perPage: isMobile ? 6 : 10,
-        orderedby: 'name',
-        direction: sortedFrom,
-      });
-      console.log(response);
-      setPagesInfo([
-        {
-          maxPage: response.total / response.perPage - 1,
-          total: response.total,
-          perPage: Number(response.perPage),
-        },
-      ]);
-      setUsersList(response.users);
-    };
-    getUsersData();
+    try {
+      setState('loading');
+      const getUsersData = async () => {
+        const response = await dataAPI.getUsers({
+          tid: accounts[0]?.tenantId,
+          token,
+          query: debouncedWindowWidth,
+          page: pageNumber,
+          perPage: isMobile ? 6 : 10,
+          orderedby: 'name',
+          direction: sortedFrom,
+        });
+
+        setPagesInfo([
+          {
+            maxPage: response.total / response.perPage - 1,
+            total: response.total,
+            perPage: Number(response.perPage),
+          },
+        ]);
+        setUsersList(response.users);
+        setState('success');
+      };
+      getUsersData();
+    } catch (error) {
+      setState('error');
+      console.log(error);
+    }
   }, [accounts, debouncedWindowWidth, isMobile, pageNumber, sortedFrom, token]);
 
   const addUser = useCallback(
@@ -189,7 +200,7 @@ export const Tabel = () => {
     }
   };
 
-  return (
+  return state === 'success' ? (
     <div>
       <div className="flex flex-col lg:flex-row justify-between lg:items-center mb-5">
         <Title size="xs" className="mb-5">
@@ -213,7 +224,7 @@ export const Tabel = () => {
           />
         </div>
       </div>
-      {isMobile ? (
+      {isMobile && state === 'success' ? (
         <MobileTabel
           items={usersList}
           setActiveUser={setActiveUser}
@@ -247,9 +258,18 @@ export const Tabel = () => {
           pagesInfo={pagesInfo}
         />
       )}
+
       <Dialog mode="form" onOpenChange={setIsModuleOpen} open={isModuleOpen}>
         {openFormNamed()}
       </Dialog>
     </div>
+  ) : (
+    <div className="w-full flex justify-center">
+      <div className="w-20 h-20">
+        <Spinner />
+      </div>
+    </div>
   );
 };
+
+export const TabelMemo = React.memo(Tabel);

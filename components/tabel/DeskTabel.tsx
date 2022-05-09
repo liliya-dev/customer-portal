@@ -42,7 +42,7 @@ export const DeskTabel = ({
   pagesInfo,
 }: DeskTabelProps) => {
   const [showMenu, setShowMenu] = useState<boolean>(false);
-  console.log(items);
+
   const handelSortBtn = () =>
     sortedFrom === 'desc' ? setSortedFrom('asc') : setSortedFrom('desc');
 
@@ -74,7 +74,7 @@ export const DeskTabel = ({
               </div>
             </td>
             <th>
-              <Icon name="UserCircle" className="w-8 h-8" />
+              <Icon name="UserCircleBlue" className="w-8 h-8" />
             </th>
             <th scope="row" className="px-2 py-4 whitespace-nowrap">
               <p>{name}</p>
@@ -121,6 +121,7 @@ export const DeskTabel = ({
       showMenu,
     ],
   );
+
   return (
     <Paper>
       <div className="relative overflow-x-auto shadow-md">
@@ -208,3 +209,5 @@ export const DeskTabel = ({
     </Paper>
   );
 };
+
+export const DeskTabelMemo = React.memo(DeskTabel);
