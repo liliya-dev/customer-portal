@@ -31,7 +31,7 @@ export const Tabel = () => {
   const [activeUser, setActiveUser] = useState<string>('');
   const [isCheckAll, setIsCheckAll] = useState<boolean>(false);
   const [isModuleOpen, setIsModuleOpen] = useState<boolean>(false);
-  const [isCheck, setIsCheck] = useState<string[]>([]);
+  const [checkedUsersList, setCheckedUsersList] = useState<string[]>([]);
   const [modalNameOpen, setModalNameOpen] = useState<
     'edit' | 'add' | 'delete' | 'deleteAll'
   >('add');
@@ -55,7 +55,7 @@ export const Tabel = () => {
       orderedby: 'name',
       direction: sortedFrom,
     });
-    console.log(response);
+
     setPagesInfo([
       {
         maxPage: Math.round(response.total / response.perPage),
@@ -63,6 +63,7 @@ export const Tabel = () => {
         perPage: Number(response.perPage),
       },
     ]);
+
     setUsersList(response.users);
     setState('success');
   }, [accounts, debouncedWindowWidth, pageNumber, sortedFrom, token]);
@@ -73,7 +74,6 @@ export const Tabel = () => {
       getUsersData();
     } catch (error) {
       setState('error');
-      console.log(error);
     }
   }, [
     accounts,
@@ -84,6 +84,13 @@ export const Tabel = () => {
     sortedFrom,
     token,
   ]);
+
+  useEffect(() => {
+    if (!checkedUsersList.length) return setIsCheckAll(false);
+    console.log(usersList, checkedUsersList);
+    console.log(usersList.every(({ _id }) => checkedUsersList.includes(_id)));
+    setIsCheckAll(usersList.every(({ _id }) => checkedUsersList.includes(_id)));
+  }, [checkedUsersList, checkedUsersList.length, usersList]);
 
   const addUser = useCallback(
     async ({ name, email, role, department }) => {
@@ -142,18 +149,12 @@ export const Tabel = () => {
     },
     [accounts, token],
   );
-  console.log(pageNumber, pagesInfo[0]?.maxPage);
-  const incrementPage = () => {
-    pagesInfo[0].maxPage !== pageNumber ? setPageNumber(pageNumber + 1) : null;
-    setIsCheckAll(false);
-    setIsCheck([]);
-  };
 
-  const decrementPage = () => {
+  const incrementPage = () =>
+    pagesInfo[0].maxPage !== pageNumber ? setPageNumber(pageNumber + 1) : null;
+
+  const decrementPage = () =>
     pageNumber !== 0 ? setPageNumber(pageNumber - 1) : null;
-    setIsCheckAll(false);
-    setIsCheck([]);
-  };
 
   const openFormNamed = useCallback(() => {
     switch (modalNameOpen) {
@@ -178,7 +179,7 @@ export const Tabel = () => {
       case 'deleteAll':
         return (
           <DeleteUsersForm
-            isCheck={isCheck}
+            isCheck={checkedUsersList}
             setIsModuleOpen={setIsModuleOpen}
             onSubmit={deleteUser}
             isCheckAll={isCheckAll}
@@ -192,7 +193,7 @@ export const Tabel = () => {
     addUser,
     deleteUser,
     editUser,
-    isCheck,
+    checkedUsersList,
     isCheckAll,
     modalNameOpen,
     usersList,
@@ -200,18 +201,18 @@ export const Tabel = () => {
 
   const handleSelectAll = (e) => {
     setIsCheckAll(!isCheckAll);
-    setIsCheck(usersList.map((item) => item._id));
+    setCheckedUsersList([...checkedUsersList, ...usersList.map((item) => item._id)]);
     if (isCheckAll) {
-      setIsCheck([]);
+      setCheckedUsersList([]);
     }
   };
 
   const handelCheckbox = (e) => {
     const { id, checked } = e.target;
-
-    setIsCheck([...isCheck, id]);
+    setIsCheckAll(false);
+    setCheckedUsersList([...checkedUsersList, id]);
     if (!checked) {
-      setIsCheck(isCheck.filter((item) => item !== id));
+      setCheckedUsersList(checkedUsersList.filter((item) => item !== id));
     }
   };
 
@@ -247,7 +248,7 @@ export const Tabel = () => {
           setIsModuleOpen={setIsModuleOpen}
           handleSelectAll={handleSelectAll}
           handelCheckbox={handelCheckbox}
-          isCheck={isCheck}
+          isCheck={checkedUsersList}
           isCheckAll={isCheckAll}
           pageNumber={pageNumber}
           decrementPage={decrementPage}
@@ -260,7 +261,7 @@ export const Tabel = () => {
           handelCheckbox={handelCheckbox}
           setIsModuleOpen={setIsModuleOpen}
           handleSelectAll={handleSelectAll}
-          isCheck={isCheck}
+          isCheck={checkedUsersList}
           isCheckAll={isCheckAll}
           items={usersList}
           setActiveUser={setActiveUser}
