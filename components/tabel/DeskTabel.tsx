@@ -42,7 +42,7 @@ export const DeskTabel = ({
   decrementPage,
   incrementPage,
   pagesInfo,
-  getLastShowedResultNumber
+  getLastShowedResultNumber,
 }: DeskTabelProps) => {
   const [showMenu, setShowMenu] = useState<boolean>(false);
 
@@ -174,31 +174,31 @@ export const DeskTabel = ({
             <div className="py-3 px-6 bg-white shadow-md border-b">
               <div className="flex justify-between items-center">
                 <p>
-                  Showing {pageNumber * pagesInfo[0].perPage + 1} to {getLastShowedResultNumber()} of{' '}
-                  {pagesInfo[0].total} results
+                  Showing {pageNumber * pagesInfo[0].perPage + 1} to{' '}
+                  {getLastShowedResultNumber()} of {pagesInfo[0].total} results
                 </p>
                 <div className="flex gap-3">
                   {isCheck.length > 0 && (
-                    <div
+                    <Button
+                      theme="white"
+                      as="button"
                       onClick={() => {
                         setModalNameOpen('deleteAll');
                         setIsModuleOpen(true);
                       }}
-                      className="py-2 px-4 border border-indigo-200 text-indigo-500 font-medium cursor-pointer"
-                    >
-                      Delete Users
-                    </div>
+                      label="Delete Users"
+                    />
                   )}
                   <Button
-                    theme='white'
+                    theme="white"
                     onClick={decrementPage}
                     as="button"
-                    label='Previous'
+                    label="Previous"
                     disabled={pageNumber < 1}
                   />
                   <Button
-                    label='Next'
-                    theme='white'
+                    label="Next"
+                    theme="white"
                     onClick={incrementPage}
                     as="button"
                     disabled={pageNumber > pagesInfo[0].maxPage - 1}
