@@ -131,8 +131,8 @@ export const Tabel = () => {
       });
       if (response.status === 200) {
         setIsModuleOpen(false);
+        getUsersData();
       }
-      console.log(response, role, name, email);
     },
     [accounts, token],
   );
@@ -155,7 +155,7 @@ export const Tabel = () => {
         getUsersData();
       }
     },
-    [accounts, getUsersData, token],
+    [accounts, token],
   );
 
   const deleteUser = useCallback(
@@ -170,7 +170,7 @@ export const Tabel = () => {
         getUsersData();
       }
     },
-    [accounts, getUsersData, token],
+    [accounts, token],
   );
 
   const incrementPage = () => {
