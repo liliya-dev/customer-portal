@@ -18,13 +18,13 @@ export const checkValidateName = (name, inputName) => {
   } else if (!validateName(name)) {
     nameErrors = [{ inputName: inputName, message: 'Enter a valid first name' }];
   } else if (name.match(/^\s+$/) !== null) {
-    nameErrors = [{ inputName: inputName, message: 'Name has blank spaces' }];
+    nameErrors = [{ inputName: inputName, message: 'First name has blank spaces' }];
   } else {
     nameErrors = [];
   }
   return nameErrors;
 };
-export const checkValidateSurname = (surname) => {
+export const checkValidateSurname = (surname, inputName) => {
   let familyErrors = [];
   if (surname === '') {
     familyErrors = [{ type: 'empty', message: 'Please enter your last name' }];
@@ -34,6 +34,8 @@ export const checkValidateSurname = (surname) => {
     familyErrors = [{ type: 'long', message: 'Too long' }];
   } else if (!validateName(surname)) {
     familyErrors = [{ type: 'invalid', message: 'Enter a valid last name' }];
+  } else if (surname.match(/^\s+$/) !== null) {
+    familyErrors = [{ inputName: inputName, message: 'Last name has blank spaces' }];
   } else {
     familyErrors = [];
   }
