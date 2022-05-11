@@ -15,7 +15,6 @@ import {
 } from '../form/Form';
 import { BREAKPOINTS, useBreakpoint } from '../../hooks/useBreakpoint';
 import { Dialog } from '../../components/dialog/Dialog';
-import { Spinner } from '../loaders/Spinner';
 import { SortOrder, UserFields, StaticState } from '../../types';
 
 import DataAPI from '../../api/data';
@@ -122,7 +121,6 @@ export const Tabel = () => {
       if (response.status === 200) {
         setIsModuleOpen(false);
       }
-      console.log(response.status, name, email, role);
     },
     [accounts, token],
   );
@@ -142,7 +140,7 @@ export const Tabel = () => {
     },
     [accounts, token],
   );
-  console.log(pageNumber, pagesInfo[0]?.maxPage);
+
   const incrementPage = () => {
     pagesInfo[0].maxPage !== pageNumber ? setPageNumber(pageNumber + 1) : null;
     setIsCheckAll(false);
@@ -224,7 +222,10 @@ export const Tabel = () => {
         <div className="flex flex-rows gap-3 lg:gap-6 justify-end">
           <Search
             inputValue={inputValue}
-            setInputValue={setInputValue}
+            setInputValue={(value) => {
+              setInputValue(value);
+              setPageNumber(0)
+            }}
             isMobile={isMobile}
           />
           <Button

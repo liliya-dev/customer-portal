@@ -132,7 +132,7 @@ export const MobileTabel = ({
         </div>
       );
     });
-
+  
   return (
     items.length > 0 && (
       <div>
@@ -167,7 +167,7 @@ export const MobileTabel = ({
                 <div className="px-2 py-3">
                   <div className="flex items-center justify-between">
                     <p className="text-indigo-500 font-medium">
-                      Showing {pageNumber + 1} to {pagesInfo[0].perPage - 1} of{' '}
+                      Showing {pageNumber * pagesInfo[0].perPage + 1} to {pagesInfo[0].perPage - 1} of{' '}
                       {pagesInfo[0].total} results
                     </p>
                     <div className="flex gap-3">

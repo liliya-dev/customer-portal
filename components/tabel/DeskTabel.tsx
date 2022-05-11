@@ -45,6 +45,11 @@ export const DeskTabel = ({
 
   const handelSortBtn = () =>
     sortedFrom === 'desc' ? setSortedFrom('asc') : setSortedFrom('desc');
+  
+  const getLastShowedResultNumber = () => {
+    let lastNumber = pagesInfo[0].perPage * (pageNumber + 1);
+    return lastNumber <= pagesInfo[0].total ? lastNumber : pagesInfo[0].total
+  }
 
   const trElement = useCallback(
     (items) =>
@@ -105,7 +110,6 @@ export const DeskTabel = ({
                   </div>
                 </div>
               ) : (
-                // <p>{role.replaceAll('_', ' ')}</p>
                 <p className="pr-4">{truncate(role, 15)}</p>
               )}
             </td>
@@ -172,7 +176,7 @@ export const DeskTabel = ({
             <div className="py-3 px-6 bg-white shadow-md border-b">
               <div className="flex justify-between items-center">
                 <p>
-                  Showing {pageNumber + 1} to {pagesInfo[0].perPage} of{' '}
+                  Showing {pageNumber * pagesInfo[0].perPage + 1} to {getLastShowedResultNumber()} of{' '}
                   {pagesInfo[0].total} results
                 </p>
                 <div className="flex gap-3">
@@ -187,18 +191,26 @@ export const DeskTabel = ({
                       Delete Users
                     </div>
                   )}
-                  <div
-                    onClick={decrementPage}
-                    className="py-2 px-4 border border-indigo-200 text-indigo-500 font-medium cursor-pointer"
-                  >
-                    Previous
-                  </div>
-                  <div
-                    onClick={incrementPage}
-                    className="py-2 px-4 border border-indigo-200 text-indigo-500 font-medium cursor-pointer"
-                  >
-                    Next
-                  </div>
+                  {
+                    pageNumber !== 0 && (
+                      <div
+                        onClick={decrementPage}
+                        className="py-2 px-4 border border-indigo-200 text-indigo-500 font-medium cursor-pointer"
+                      >
+                        Previous
+                      </div>
+                    )
+                  }
+                  {
+                    pageNumber <= pagesInfo[0].maxPage - 1 && (
+                      <div
+                        onClick={incrementPage}
+                        className="py-2 px-4 border border-indigo-200 text-indigo-500 font-medium cursor-pointer"
+                      >
+                        Next
+                      </div>
+                    )
+                  }
                 </div>
               </div>
             </div>
