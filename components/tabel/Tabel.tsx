@@ -44,6 +44,11 @@ export const Tabel = () => {
   const storadgeKey = `${accounts[0].homeAccountId}-${accounts[0].environment}-idtoken-${accounts[0].idTokenClaims['aud']}-${accounts[0].tenantId}---`;
   const token = JSON.parse(sessionStorage.getItem(storadgeKey)).secret;
 
+  const getLastShowedResultNumber = () => {
+    let lastNumber = pagesInfo[0].perPage * (pageNumber + 1);
+    return lastNumber <= pagesInfo[0].total ? lastNumber : pagesInfo[0].total
+  }
+
   const getUsersData = useCallback(async () => {
     const response = await dataAPI.getUsers({
       tid: accounts[0]?.tenantId,
@@ -248,6 +253,7 @@ export const Tabel = () => {
           setIsModuleOpen={setIsModuleOpen}
           handleSelectAll={handleSelectAll}
           handelCheckbox={handelCheckbox}
+          getLastShowedResultNumber={getLastShowedResultNumber}
           isCheck={isCheck}
           isCheckAll={isCheckAll}
           pageNumber={pageNumber}
@@ -260,6 +266,7 @@ export const Tabel = () => {
           activeUser={activeUser}
           handelCheckbox={handelCheckbox}
           setIsModuleOpen={setIsModuleOpen}
+          getLastShowedResultNumber={getLastShowedResultNumber}
           handleSelectAll={handleSelectAll}
           isCheck={isCheck}
           isCheckAll={isCheckAll}

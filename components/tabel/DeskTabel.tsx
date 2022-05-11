@@ -5,6 +5,7 @@ import { Icon } from '../icons/Icon';
 import { formatDate } from '../../helpers/utils/date';
 import { UserType } from '../../types';
 import { truncate } from '../../helpers/utils/string';
+import { Button } from '../buttons/Button';
 
 export type DeskTabelProps = {
   items: UserType[];
@@ -22,6 +23,7 @@ export type DeskTabelProps = {
   decrementPage: () => void;
   incrementPage: () => void;
   pagesInfo: { total: number; maxPage: number; perPage: number }[];
+  getLastShowedResultNumber: () => number;
 };
 
 export const DeskTabel = ({
@@ -40,16 +42,12 @@ export const DeskTabel = ({
   decrementPage,
   incrementPage,
   pagesInfo,
+  getLastShowedResultNumber
 }: DeskTabelProps) => {
   const [showMenu, setShowMenu] = useState<boolean>(false);
 
   const handelSortBtn = () =>
     sortedFrom === 'desc' ? setSortedFrom('asc') : setSortedFrom('desc');
-  
-  const getLastShowedResultNumber = () => {
-    let lastNumber = pagesInfo[0].perPage * (pageNumber + 1);
-    return lastNumber <= pagesInfo[0].total ? lastNumber : pagesInfo[0].total
-  }
 
   const trElement = useCallback(
     (items) =>
@@ -191,26 +189,20 @@ export const DeskTabel = ({
                       Delete Users
                     </div>
                   )}
-                  {
-                    pageNumber !== 0 && (
-                      <div
-                        onClick={decrementPage}
-                        className="py-2 px-4 border border-indigo-200 text-indigo-500 font-medium cursor-pointer"
-                      >
-                        Previous
-                      </div>
-                    )
-                  }
-                  {
-                    pageNumber <= pagesInfo[0].maxPage - 1 && (
-                      <div
-                        onClick={incrementPage}
-                        className="py-2 px-4 border border-indigo-200 text-indigo-500 font-medium cursor-pointer"
-                      >
-                        Next
-                      </div>
-                    )
-                  }
+                  <Button
+                    theme='white'
+                    onClick={decrementPage}
+                    as="button"
+                    label='Previous'
+                    disabled={pageNumber < 1}
+                  />
+                  <Button
+                    label='Next'
+                    theme='white'
+                    onClick={incrementPage}
+                    as="button"
+                    disabled={pageNumber > pagesInfo[0].maxPage - 1}
+                  />
                 </div>
               </div>
             </div>
