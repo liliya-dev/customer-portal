@@ -19,15 +19,15 @@ const departmentList = [
 
 export const AddUserForm = ({ onSubmit }) => {
   const [errors, setErrors] = useState([]);
-  console.log(!!errors.length);
+
   const handelChange = ({ target }) => {
     const { value, name } = target;
     switch (name) {
       case 'FirstName':
-        setErrors(checkValidateName(value, name));
+        setErrors(checkValidateName(value));
         break;
       case 'LastName':
-        setErrors(checkValidateSurname(value, name));
+        setErrors(checkValidateSurname(value));
         break;
       case 'Email':
         setErrors(checkValidateEmail(value));
@@ -158,10 +158,9 @@ export const AddUserForm = ({ onSubmit }) => {
 };
 
 export const EditUserForm = ({ setIsModuleOpen, user, onSubmit }) => {
+  const [errors, setErrors] = useState([]);
   const { name, email, _id, department } = user[0];
   const newName = name.split(' ');
-  // console.log(name);
-  // console.log(checkValidateName(name));
   const [firstName, setFirstName] = useState(name ? newName[0] : '');
   const [lastName, setLastName] = useState(name ? newName[1] : '');
   const [emailUser, setEmailUser] = useState(email ? email : '');
@@ -170,13 +169,51 @@ export const EditUserForm = ({ setIsModuleOpen, user, onSubmit }) => {
     department ? department : 'Department',
   );
 
+  // const handelChange = ({ target }) => {
+  //   const { value, name } = target;
+  //   switch (name) {
+  //     case 'FirstName':
+  //       setErrors(checkValidateName(value));
+  //       break;
+  //     case 'LastName':
+  //       setErrors(checkValidateSurname(value));
+  //       break;
+  //     case 'Email':
+  //       setErrors(checkValidateEmail(value));
+  //       break;
+  //     default:
+  //       break;
+  //   }
+  // };
   return (
     <form
       onSubmit={(e) => {
         e.preventDefault();
         const form = e.currentTarget;
 
-        console.log(form.role.value);
+        if (!form.Role.value || form.Role.value === 'Role') {
+          return setErrors([
+            { inputName: 'role', message: 'Select from Role list' },
+          ]);
+        }
+        if (form.Department.value === 'Department' || form.Department.value === '') {
+          return setErrors([
+            { inputName: 'department', message: 'Select from Department list' },
+          ]);
+        }
+
+        if (
+          !form.FirstName.value.trim().length ||
+          !form.LastName.value.trim().length
+        ) {
+          return setErrors([
+            {
+              inputName: 'department',
+              message: 'Check if the fields are filled in correctly',
+            },
+          ]);
+        }
+
         // onSubmit({
         //   name: `${form.FirstName.value} ${form.LastName.value}`,
         //   email: emailUser,
@@ -186,10 +223,11 @@ export const EditUserForm = ({ setIsModuleOpen, user, onSubmit }) => {
         // });
       }}
       className="inline-block w-550 max-w-full"
+      onChange={handelChange}
     >
       <div className="shadow-xl bg-white border border-black border-opacity-5 text-center px-8 py-4 lg:px-16 lg:py-10">
         <Title size="lg">Edit User</Title>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 my-8 lg:my-16">
+        <div className="relative grid grid-cols-1 lg:grid-cols-2 gap-4 my-8 lg:my-16">
           <div>
             <input
               required
@@ -251,6 +289,13 @@ export const EditUserForm = ({ setIsModuleOpen, user, onSubmit }) => {
                 <option key={i}>{dept}</option>
               ))}
             </select>
+            {!!errors.length && (
+              <div className="absolute -bottom-6 md:-bottom-8 inset-x-0">
+                <p className="text-red-400 text-md text-center lg:col-span-2">
+                  {errors[0].message}
+                </p>
+              </div>
+            )}
           </div>
         </div>
         <div className="flex flex-rows gap-6 content-center">
