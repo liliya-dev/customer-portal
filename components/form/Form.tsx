@@ -19,11 +19,12 @@ const departmentList = [
 
 export const AddUserForm = ({ onSubmit }) => {
   const [errors, setErrors] = useState([]);
+
   const handelChange = ({ target }) => {
     const { value, name } = target;
     switch (name) {
       case 'FirstName':
-        setErrors(checkValidateName(value, name));
+        setErrors(checkValidateName(value));
         break;
       case 'LastName':
         setErrors(checkValidateSurname(value));
@@ -43,7 +44,31 @@ export const AddUserForm = ({ onSubmit }) => {
         e.preventDefault();
 
         const form: HTMLFormElement = e.currentTarget;
-        const newName = `${form.FirstName.value} ${form.LastName.value}`;
+
+        if (!form.Role.value || form.Role.value === 'Role') {
+          return setErrors([
+            { inputName: 'role', message: 'Select from Role list' },
+          ]);
+        }
+        if (form.Department.value === 'Department' || form.Department.value === '') {
+          return setErrors([
+            { inputName: 'department', message: 'Select from Department list' },
+          ]);
+        }
+
+        if (
+          !form.FirstName.value.trim().length ||
+          !form.LastName.value.trim().length
+        ) {
+          return setErrors([
+            {
+              inputName: 'department',
+              message: 'Check if the fields are filled in correctly',
+            },
+          ]);
+        }
+
+        const newName = `${form.FirstName.value.trim()} ${form.LastName.value.trim()}`;
         onSubmit({
           name: newName,
           email: form.Email.value,
@@ -55,7 +80,7 @@ export const AddUserForm = ({ onSubmit }) => {
     >
       <div className="shadow-xl bg-white border border-black border-opacity-5 text-center  px-8 py-4 lg:px-16 lg:py-10">
         <Title size="lg">Add User</Title>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4  my-8 lg:my-16">
+        <div className="relative grid grid-cols-1 lg:grid-cols-2 gap-4  my-8 lg:my-16">
           <div>
             <input
               required
@@ -85,10 +110,10 @@ export const AddUserForm = ({ onSubmit }) => {
           </div>
           <div>
             <select
-              required
               name="Role"
               id="role"
               className="border bg-white border-indigo-50 placeholder-indigo-300 md:text-base w-full"
+              onChange={() => setErrors([])}
             >
               <option value="">Role</option>
               {roleList.map((role, i) => (
@@ -100,10 +125,10 @@ export const AddUserForm = ({ onSubmit }) => {
           </div>
           <div className="lg:col-span-2 ">
             <select
-              required
               name="Department"
               id="department"
               className="border bg-white border-indigo-50 placeholder-indigo-300 md:text-base w-full"
+              onChange={() => setErrors([])}
             >
               <option>Department</option>
               {departmentList.map((dept, i) => (
@@ -111,10 +136,12 @@ export const AddUserForm = ({ onSubmit }) => {
               ))}
             </select>
           </div>
-          {errors.length && (
-            <p className="text-red-400 text-md text-center lg:col-span-2">
-              {errors[0].message}
-            </p>
+          {!!errors.length && (
+            <div className="absolute -bottom-6 md:-bottom-8 inset-x-0">
+              <p className="text-red-400 text-md text-center lg:col-span-2">
+                {errors[0].message}
+              </p>
+            </div>
           )}
         </div>
         <Button
@@ -131,10 +158,9 @@ export const AddUserForm = ({ onSubmit }) => {
 };
 
 export const EditUserForm = ({ setIsModuleOpen, user, onSubmit }) => {
+  const [errors, setErrors] = useState([]);
   const { name, email, _id, department } = user[0];
   const newName = name.split(' ');
-  // console.log(name);
-  // console.log(checkValidateName(name));
   const [firstName, setFirstName] = useState(name ? newName[0] : '');
   const [lastName, setLastName] = useState(name ? newName[1] : '');
   const [emailUser, setEmailUser] = useState(email ? email : '');
@@ -143,25 +169,65 @@ export const EditUserForm = ({ setIsModuleOpen, user, onSubmit }) => {
     department ? department : 'Department',
   );
 
+  // const handelChange = ({ target }) => {
+  //   const { value, name } = target;
+  //   switch (name) {
+  //     case 'FirstName':
+  //       setErrors(checkValidateName(value));
+  //       break;
+  //     case 'LastName':
+  //       setErrors(checkValidateSurname(value));
+  //       break;
+  //     case 'Email':
+  //       setErrors(checkValidateEmail(value));
+  //       break;
+  //     default:
+  //       break;
+  //   }
+  // };
   return (
     <form
       onSubmit={(e) => {
         e.preventDefault();
         const form = e.currentTarget;
 
-        onSubmit({
-          name: `${form.FirstName.value} ${form.LastName.value}`,
-          email: emailUser,
-          role: roleUser,
-          id: _id,
-          department: departUser,
-        });
+        if (!form.Role.value || form.Role.value === 'Role') {
+          return setErrors([
+            { inputName: 'role', message: 'Select from Role list' },
+          ]);
+        }
+        if (form.Department.value === 'Department' || form.Department.value === '') {
+          return setErrors([
+            { inputName: 'department', message: 'Select from Department list' },
+          ]);
+        }
+
+        if (
+          !form.FirstName.value.trim().length ||
+          !form.LastName.value.trim().length
+        ) {
+          return setErrors([
+            {
+              inputName: 'department',
+              message: 'Check if the fields are filled in correctly',
+            },
+          ]);
+        }
+
+        // onSubmit({
+        //   name: `${form.FirstName.value} ${form.LastName.value}`,
+        //   email: emailUser,
+        //   role: roleUser,
+        //   id: _id,
+        //   department: departUser,
+        // });
       }}
       className="inline-block w-550 max-w-full"
+      onChange={handelChange}
     >
       <div className="shadow-xl bg-white border border-black border-opacity-5 text-center px-8 py-4 lg:px-16 lg:py-10">
         <Title size="lg">Edit User</Title>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 my-8 lg:my-16">
+        <div className="relative grid grid-cols-1 lg:grid-cols-2 gap-4 my-8 lg:my-16">
           <div>
             <input
               required
@@ -197,7 +263,6 @@ export const EditUserForm = ({ setIsModuleOpen, user, onSubmit }) => {
           </div>
           <div>
             <select
-              required
               name="role"
               id="role"
               className="border bg-white border-indigo-50 placeholder-indigo-300 md:text-base w-full"
@@ -214,7 +279,6 @@ export const EditUserForm = ({ setIsModuleOpen, user, onSubmit }) => {
           </div>
           <div className="lg:col-span-2 ">
             <select
-              required
               name="Department"
               id="department"
               className="border bg-white border-indigo-50 placeholder-indigo-300 md:text-base w-full"
@@ -225,6 +289,13 @@ export const EditUserForm = ({ setIsModuleOpen, user, onSubmit }) => {
                 <option key={i}>{dept}</option>
               ))}
             </select>
+            {!!errors.length && (
+              <div className="absolute -bottom-6 md:-bottom-8 inset-x-0">
+                <p className="text-red-400 text-md text-center lg:col-span-2">
+                  {errors[0].message}
+                </p>
+              </div>
+            )}
           </div>
         </div>
         <div className="flex flex-rows gap-6 content-center">

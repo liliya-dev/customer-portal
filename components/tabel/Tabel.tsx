@@ -35,7 +35,7 @@ export const Tabel = () => {
   const [activeUser, setActiveUser] = useState<string>('');
   const [isCheckAll, setIsCheckAll] = useState<boolean>(false);
   const [isModuleOpen, setIsModuleOpen] = useState<boolean>(false);
-  const [isCheck, setIsCheck] = useState<string[]>([]);
+  const [checkedUsersList, setCheckedUsersList] = useState<string[]>([]);
   const [modalNameOpen, setModalNameOpen] = useState<
     'edit' | 'add' | 'delete' | 'deleteAll'
     >('add');
@@ -53,8 +53,8 @@ export const Tabel = () => {
 
   const getLastShowedResultNumber = () => {
     let lastNumber = pagesInfo[0].perPage * (pageNumber + 1);
-    return lastNumber <= pagesInfo[0].total ? lastNumber : pagesInfo[0].total
-  }
+    return lastNumber <= pagesInfo[0].total ? lastNumber : pagesInfo[0].total;
+  };
 
   const getUsersData = async () => {
     const response = await dataAPI.getUsers({
@@ -66,6 +66,7 @@ export const Tabel = () => {
       orderedby: 'name',
       direction: sortedFrom,
     });
+    
     setPagesInfo([
       {
         maxPage: Math.round(response.total / response.perPage),
@@ -73,6 +74,7 @@ export const Tabel = () => {
         perPage: Number(response.perPage),
       },
     ]);
+
     setUsersList(response.users);
     setState('success');
   };
@@ -105,6 +107,11 @@ export const Tabel = () => {
       shallow: true,
     });
   };
+
+  useEffect(() => {
+    if (!checkedUsersList.length) return setIsCheckAll(false);
+    setIsCheckAll(usersList.every(({ _id }) => checkedUsersList.includes(_id)));
+  }, [checkedUsersList, checkedUsersList.length, usersList]);
 
   const addUser = useCallback(
     async ({ name, email, role, department }) => {
@@ -164,17 +171,14 @@ export const Tabel = () => {
 
   const incrementPage = () => {
     const page = pagesInfo[0].maxPage !== pageNumber ? pageNumber + 1 : pagesInfo[0].maxPage;
-    setIsCheckAll(false);
-    setIsCheck([]);
     addParams([{key: 'page', value: page + 1}])
   };
 
   const decrementPage = () => {
     const page = pageNumber !== 0 ? pageNumber - 1 : 0;
     addParams([{key: 'page', value: page + 1}])
-    setIsCheckAll(false);
-    setIsCheck([]);
   };
+
 
   const openFormNamed = useCallback(() => {
     switch (modalNameOpen) {
@@ -199,7 +203,7 @@ export const Tabel = () => {
       case 'deleteAll':
         return (
           <DeleteUsersForm
-            isCheck={isCheck}
+            isCheck={checkedUsersList}
             setIsModuleOpen={setIsModuleOpen}
             onSubmit={deleteUser}
             isCheckAll={isCheckAll}
@@ -213,7 +217,7 @@ export const Tabel = () => {
     addUser,
     deleteUser,
     editUser,
-    isCheck,
+    checkedUsersList,
     isCheckAll,
     modalNameOpen,
     usersList,
@@ -221,18 +225,18 @@ export const Tabel = () => {
 
   const handleSelectAll = (e) => {
     setIsCheckAll(!isCheckAll);
-    setIsCheck(usersList.map((item) => item._id));
+    setCheckedUsersList([...checkedUsersList, ...usersList.map((item) => item._id)]);
     if (isCheckAll) {
-      setIsCheck([]);
+      setCheckedUsersList([]);
     }
   };
 
   const handelCheckbox = (e) => {
     const { id, checked } = e.target;
-
-    setIsCheck([...isCheck, id]);
+    setIsCheckAll(false);
+    setCheckedUsersList([...checkedUsersList, id]);
     if (!checked) {
-      setIsCheck(isCheck.filter((item) => item !== id));
+      setCheckedUsersList(checkedUsersList.filter((item) => item !== id));
     }
   };
 
@@ -271,7 +275,7 @@ export const Tabel = () => {
           handleSelectAll={handleSelectAll}
           handelCheckbox={handelCheckbox}
           getLastShowedResultNumber={getLastShowedResultNumber}
-          isCheck={isCheck}
+          isCheck={checkedUsersList}
           isCheckAll={isCheckAll}
           pageNumber={pageNumber}
           decrementPage={decrementPage}
@@ -285,7 +289,7 @@ export const Tabel = () => {
           setIsModuleOpen={setIsModuleOpen}
           getLastShowedResultNumber={getLastShowedResultNumber}
           handleSelectAll={handleSelectAll}
-          isCheck={isCheck}
+          isCheck={checkedUsersList}
           isCheckAll={isCheckAll}
           items={usersList}
           setActiveUser={setActiveUser}
