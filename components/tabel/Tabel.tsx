@@ -1,6 +1,5 @@
 import { useMsal } from '@azure/msal-react';
 import React, { useState, useEffect, useCallback } from 'react';
-
 import { useDebounce } from '../../hooks/useDebounce';
 import { DeskTabelMemo as DeskTabel } from './DeskTabel';
 import { MobileTabelMemo as MobileTabel } from './MobileTabel';
@@ -18,6 +17,12 @@ import { Dialog } from '../../components/dialog/Dialog';
 import { SortOrder, UserFields, StaticState } from '../../types';
 
 import DataAPI from '../../api/data';
+import { useRouter } from 'next/router';
+
+export function firstOf(val: string[] | string) {
+  const firstValue = Array.isArray(val) ? val[0] : val;
+  return firstValue || null;
+}
 
 const dataAPI = new DataAPI();
 
@@ -33,13 +38,15 @@ export const Tabel = () => {
   const [checkedUsersList, setCheckedUsersList] = useState<string[]>([]);
   const [modalNameOpen, setModalNameOpen] = useState<
     'edit' | 'add' | 'delete' | 'deleteAll'
-  >('add');
-  const [inputValue, setInputValue] = useState<string>('');
-  const [pageNumber, setPageNumber] = useState<number>(0);
+    >('add');
+    const router = useRouter();
+  const [inputValue, setInputValue] = useState<string>(firstOf(router.query?.search) || '');
+  const [pageNumber, setPageNumber] = useState<number>(+router.query?.page - 1 || 0);
   const [pagesInfo, setPagesInfo] = useState([]);
-  const [sortedFrom, setSortedFrom] = useState<SortOrder>('asc');
+  const [sortedFrom, setSortedFrom] = useState<string>(firstOf(router.query?.direction) || 'asc');
 
-  const debouncedWindowWidth = useDebounce(inputValue, 500);
+
+  const debouncedInputValue = useDebounce(inputValue, 500);
   const isMobile = screenWidth < BREAKPOINTS.md;
   const storadgeKey = `${accounts[0].homeAccountId}-${accounts[0].environment}-idtoken-${accounts[0].idTokenClaims['aud']}-${accounts[0].tenantId}---`;
   const token = JSON.parse(sessionStorage.getItem(storadgeKey)).secret;
@@ -49,17 +56,17 @@ export const Tabel = () => {
     return lastNumber <= pagesInfo[0].total ? lastNumber : pagesInfo[0].total;
   };
 
-  const getUsersData = useCallback(async () => {
+  const getUsersData = async () => {
     const response = await dataAPI.getUsers({
       tid: accounts[0]?.tenantId,
       token,
-      query: debouncedWindowWidth,
+      query: debouncedInputValue,
       page: pageNumber,
       perPage: 10,
       orderedby: 'name',
       direction: sortedFrom,
     });
-
+    
     setPagesInfo([
       {
         maxPage: Math.round(response.total / response.perPage),
@@ -70,29 +77,39 @@ export const Tabel = () => {
 
     setUsersList(response.users);
     setState('success');
-  }, [accounts, debouncedWindowWidth, pageNumber, sortedFrom, token]);
+  };
 
   useEffect(() => {
-    try {
-      setState('loading');
-      getUsersData();
-    } catch (error) {
-      setState('error');
-    }
-  }, [
-    accounts,
-    debouncedWindowWidth,
-    getUsersData,
-    isMobile,
-    pageNumber,
-    sortedFrom,
-    token,
-  ]);
+    if (typeof window === undefined || !router.query) return;
+    setPageNumber(+router.query?.page - 1 || 0);
+    const sortDirection = firstOf(router.query?.direction);
+    setSortedFrom(sortDirection);
+    setInputValue(firstOf(router.query?.search) || '');
+  }, [router.query])
+
+  useEffect(() => {
+    if (typeof window === undefined || !router.query) return;
+    getUsersData()
+  }, [pageNumber, sortedFrom, debouncedInputValue])
+
+  const addParams = (list = []) => {
+    let newPairs = {};
+    list.forEach(({ key, value }) => {
+      newPairs[key] = value
+    })
+    let newQuery = { ...router.query, ...newPairs };
+    newQuery = Object.entries(newQuery).reduce(
+      (a, [k, v]) => (v ? ((a[k] = v), a) : a), // remove falsy values
+      {},
+    );
+
+    router.push({ pathname: router.pathname, query: newQuery }, undefined, {
+      shallow: true,
+    });
+  };
 
   useEffect(() => {
     if (!checkedUsersList.length) return setIsCheckAll(false);
-    console.log(usersList, checkedUsersList);
-    console.log(usersList.every(({ _id }) => checkedUsersList.includes(_id)));
     setIsCheckAll(usersList.every(({ _id }) => checkedUsersList.includes(_id)));
   }, [checkedUsersList, checkedUsersList.length, usersList]);
 
@@ -139,7 +156,6 @@ export const Tabel = () => {
 
   const deleteUser = useCallback(
     async ({ id }) => {
-      console.log(id);
       const response = await dataAPI.deleteUser({
         tid: accounts[0]?.tenantId,
         token,
@@ -153,11 +169,16 @@ export const Tabel = () => {
     [accounts, token],
   );
 
-  const incrementPage = () =>
-    pagesInfo[0].maxPage !== pageNumber ? setPageNumber(pageNumber + 1) : null;
+  const incrementPage = () => {
+    const page = pagesInfo[0].maxPage !== pageNumber ? pageNumber + 1 : pagesInfo[0].maxPage;
+    addParams([{key: 'page', value: page + 1}])
+  };
 
-  const decrementPage = () =>
-    pageNumber !== 0 ? setPageNumber(pageNumber - 1) : null;
+  const decrementPage = () => {
+    const page = pageNumber !== 0 ? pageNumber - 1 : 0;
+    addParams([{key: 'page', value: page + 1}])
+  };
+
 
   const openFormNamed = useCallback(() => {
     switch (modalNameOpen) {
@@ -229,8 +250,7 @@ export const Tabel = () => {
           <Search
             inputValue={inputValue}
             setInputValue={(value) => {
-              setInputValue(value);
-              setPageNumber(0);
+              addParams([{ key: 'search', value }, { key: 'page', value: 1 }]);
             }}
             isMobile={isMobile}
           />
@@ -274,7 +294,7 @@ export const Tabel = () => {
           items={usersList}
           setActiveUser={setActiveUser}
           setModalNameOpen={setModalNameOpen}
-          setSortedFrom={setSortedFrom}
+          setSortedFrom={(value) =>  addParams([{key: 'direction', value}])}
           sortedFrom={sortedFrom}
           pageNumber={pageNumber}
           decrementPage={decrementPage}
