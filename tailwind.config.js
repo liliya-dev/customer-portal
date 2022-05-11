@@ -130,6 +130,7 @@ module.exports = {
       xs: '500px',
       screen: '100vw',
       full: '100%',
+      '80': '80%',
       '40vw': '40vw',
       '50vw': '50vw',
       '60vw': '60vw',
