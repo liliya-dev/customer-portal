@@ -5,6 +5,7 @@ import { Icon } from '../icons/Icon';
 import { formatDate } from '../../helpers/utils/date';
 import { truncate } from '../../helpers/utils/string';
 import { UserType } from '../../types';
+import { Button } from '../buttons/Button';
 
 export type MobileTabelProps = {
   items: UserType[];
@@ -19,6 +20,7 @@ export type MobileTabelProps = {
   decrementPage: () => void;
   incrementPage: () => void;
   pagesInfo: { total: number; maxPage: number; perPage: number }[];
+  getLastShowedResultNumber: () => number;
 };
 
 export const MobileTabel = ({
@@ -34,6 +36,7 @@ export const MobileTabel = ({
   decrementPage,
   incrementPage,
   pagesInfo,
+  getLastShowedResultNumber
 }) => {
   const [isOpen, setIsOpen] = useState([]);
 
@@ -132,7 +135,7 @@ export const MobileTabel = ({
         </div>
       );
     });
-
+  
   return (
     items.length > 0 && (
       <div>
@@ -167,22 +170,24 @@ export const MobileTabel = ({
                 <div className="px-2 py-3">
                   <div className="flex items-center justify-between">
                     <p className="text-indigo-500 font-medium">
-                      Showing {pageNumber + 1} to {pagesInfo[0].perPage - 1} of{' '}
+                      Showing {pageNumber * pagesInfo[0].perPage + 1} to {getLastShowedResultNumber()} of{' '}
                       {pagesInfo[0].total} results
                     </p>
                     <div className="flex gap-3">
-                      <div
-                        className="border border-indigo-200 p-2"
+                      <Button
+                        icon='ChevronLeftIcon'
+                        theme='white'
                         onClick={decrementPage}
-                      >
-                        <Icon name="ChevronLeftIcon" className="w-4 h-4" />
-                      </div>
-                      <div
-                        className="border border-indigo-200 p-2"
+                        as="button"
+                        disabled={pageNumber < 1}
+                      />
+                      <Button
+                        icon='ChevronRightIcon'
+                        theme='white'
                         onClick={incrementPage}
-                      >
-                        <Icon name="ChevronRightIcon" className="w-4 h-4" />
-                      </div>
+                        as="button"
+                        disabled={pageNumber > pagesInfo[0].maxPage - 1}
+                      />
                     </div>
                   </div>
                 </div>

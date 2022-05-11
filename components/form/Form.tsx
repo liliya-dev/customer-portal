@@ -35,7 +35,7 @@ export const AddUserForm = ({ onSubmit }) => {
         break;
     }
   };
-  console.log(errors);
+
   return (
     <form
       className="inline-block w-550 max-w-full"

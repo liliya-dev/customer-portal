@@ -1,8 +1,3 @@
-/**
- * Usage:
- * const [searchTerm, setSearchTerm] = useState("");
- * const debouncedSearchTerm = useDebounce(searchTerm, 500);
- */
 import { useEffect, useState } from 'react';
 
 export function useDebounce(value, delay) {
