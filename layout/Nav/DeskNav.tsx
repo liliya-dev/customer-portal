@@ -29,7 +29,7 @@ export const DeskNav = ({ showUserMenu, open, onClickMenu }: DeskNavProps) => {
           )}
         </div>
         {open && (
-          <div className="fixed top-20 right-10 shadow-[0_4px_20px_rgba(0,0,0,0.25)] w-72">
+          <div className="fixed z-50 top-20 right-10 shadow-[0_4px_20px_rgba(0,0,0,0.25)] w-72">
             <div
               className="bg-white p-8 flex items-center justify-items-start justify-start gap-5 text-indigo-500 font-medium cursor-pointer"
               onClick={() => instance.logout()}

@@ -6,3 +6,5 @@ export type PaperProps = {
 export const Paper = ({ children }: PaperProps) => {
   return <div className="bg-white shadow-lg">{children}</div>;
 };
+
+export const PaperMemo = React.memo(Paper);

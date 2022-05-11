@@ -41,3 +41,5 @@ export const ArticleCard = ({ title, href, image, label }: ResourceCardProps) =>
     </CardShadow>
   );
 };
+
+export const ArticleCardMemo = React.memo(ArticleCard);

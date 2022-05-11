@@ -45,44 +45,53 @@ export const Tabel = () => {
   const storadgeKey = `${accounts[0].homeAccountId}-${accounts[0].environment}-idtoken-${accounts[0].idTokenClaims['aud']}-${accounts[0].tenantId}---`;
   const token = JSON.parse(sessionStorage.getItem(storadgeKey)).secret;
 
+  const getUsersData = useCallback(async () => {
+    const response = await dataAPI.getUsers({
+      tid: accounts[0]?.tenantId,
+      token,
+      query: debouncedWindowWidth,
+      page: pageNumber,
+      perPage: 10,
+      orderedby: 'name',
+      direction: sortedFrom,
+    });
+    console.log(response);
+    setPagesInfo([
+      {
+        maxPage: Math.round(response.total / response.perPage),
+        total: response.total,
+        perPage: Number(response.perPage),
+      },
+    ]);
+    setUsersList(response.users);
+    setState('success');
+  }, [accounts, debouncedWindowWidth, pageNumber, sortedFrom, token]);
+
   useEffect(() => {
     try {
       setState('loading');
-      const getUsersData = async () => {
-        const response = await dataAPI.getUsers({
-          tid: accounts[0]?.tenantId,
-          token,
-          query: debouncedWindowWidth,
-          page: pageNumber,
-          perPage: isMobile ? 6 : 10,
-          orderedby: 'name',
-          direction: sortedFrom,
-        });
-
-        setPagesInfo([
-          {
-            maxPage: response.total / response.perPage - 1,
-            total: response.total,
-            perPage: Number(response.perPage),
-          },
-        ]);
-        setUsersList(response.users);
-        setState('success');
-      };
       getUsersData();
     } catch (error) {
       setState('error');
       console.log(error);
     }
-  }, [accounts, debouncedWindowWidth, isMobile, pageNumber, sortedFrom, token]);
+  }, [
+    accounts,
+    debouncedWindowWidth,
+    getUsersData,
+    isMobile,
+    pageNumber,
+    sortedFrom,
+    token,
+  ]);
 
   const addUser = useCallback(
-    async ({ name, email, role }) => {
+    async ({ name, email, role, department }) => {
       const response = await dataAPI.addUser({
         tid: accounts[0]?.tenantId,
         token,
         body: {
-          department: 'Production',
+          department,
           license: 'FREE',
           role,
           email,
@@ -133,12 +142,18 @@ export const Tabel = () => {
     },
     [accounts, token],
   );
-
-  const incrementPage = () =>
+  console.log(pageNumber, pagesInfo[0]?.maxPage);
+  const incrementPage = () => {
     pagesInfo[0].maxPage !== pageNumber ? setPageNumber(pageNumber + 1) : null;
+    setIsCheckAll(false);
+    setIsCheck([]);
+  };
 
-  const decrementPage = () =>
+  const decrementPage = () => {
     pageNumber !== 0 ? setPageNumber(pageNumber - 1) : null;
+    setIsCheckAll(false);
+    setIsCheck([]);
+  };
 
   const openFormNamed = useCallback(() => {
     switch (modalNameOpen) {
@@ -200,7 +215,7 @@ export const Tabel = () => {
     }
   };
 
-  return state === 'success' ? (
+  return (
     <div>
       <div className="flex flex-col lg:flex-row justify-between lg:items-center mb-5">
         <Title size="xs" className="mb-5">
@@ -224,7 +239,7 @@ export const Tabel = () => {
           />
         </div>
       </div>
-      {isMobile && state === 'success' ? (
+      {isMobile ? (
         <MobileTabel
           items={usersList}
           setActiveUser={setActiveUser}
@@ -262,12 +277,6 @@ export const Tabel = () => {
       <Dialog mode="form" onOpenChange={setIsModuleOpen} open={isModuleOpen}>
         {openFormNamed()}
       </Dialog>
-    </div>
-  ) : (
-    <div className="w-full flex justify-center">
-      <div className="w-20 h-20">
-        <Spinner />
-      </div>
     </div>
   );
 };
