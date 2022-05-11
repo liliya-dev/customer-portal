@@ -38,14 +38,17 @@ export const Tabel = () => {
   const [checkedUsersList, setCheckedUsersList] = useState<string[]>([]);
   const [modalNameOpen, setModalNameOpen] = useState<
     'edit' | 'add' | 'delete' | 'deleteAll'
-    >('add');
-    const router = useRouter();
-  const [inputValue, setInputValue] = useState<string>(firstOf(router.query?.search) || '');
+  >('add');
+  const router = useRouter();
+  const [inputValue, setInputValue] = useState<string>(
+    firstOf(router.query?.search) || '',
+  );
   const [pageNumber, setPageNumber] = useState<number>(+router.query?.page - 1 || 0);
   const [pagesInfo, setPagesInfo] = useState([]);
-  const [sortedFrom, setSortedFrom] = useState<string>(firstOf(router.query?.direction) || 'asc');
-
-
+  const [sortedFrom, setSortedFrom] = useState<string>(
+    firstOf(router.query?.direction) || 'asc',
+  );
+  console.log(usersList);
   const debouncedInputValue = useDebounce(inputValue, 500);
   const isMobile = screenWidth < BREAKPOINTS.md;
   const storadgeKey = `${accounts[0].homeAccountId}-${accounts[0].environment}-idtoken-${accounts[0].idTokenClaims['aud']}-${accounts[0].tenantId}---`;
@@ -66,7 +69,7 @@ export const Tabel = () => {
       orderedby: 'name',
       direction: sortedFrom,
     });
-    
+
     setPagesInfo([
       {
         maxPage: Math.round(response.total / response.perPage),
@@ -85,18 +88,18 @@ export const Tabel = () => {
     const sortDirection = firstOf(router.query?.direction);
     setSortedFrom(sortDirection);
     setInputValue(firstOf(router.query?.search) || '');
-  }, [router.query])
+  }, [router.query]);
 
   useEffect(() => {
     if (typeof window === undefined || !router.query) return;
-    getUsersData()
-  }, [pageNumber, sortedFrom, debouncedInputValue])
+    getUsersData();
+  }, [pageNumber, sortedFrom, debouncedInputValue]);
 
   const addParams = (list = []) => {
     let newPairs = {};
     list.forEach(({ key, value }) => {
-      newPairs[key] = value
-    })
+      newPairs[key] = value;
+    });
     let newQuery = { ...router.query, ...newPairs };
     newQuery = Object.entries(newQuery).reduce(
       (a, [k, v]) => (v ? ((a[k] = v), a) : a), // remove falsy values
@@ -149,9 +152,10 @@ export const Tabel = () => {
       });
       if (response.status === 200) {
         setIsModuleOpen(false);
+        getUsersData();
       }
     },
-    [accounts, token],
+    [accounts, getUsersData, token],
   );
 
   const deleteUser = useCallback(
@@ -163,22 +167,22 @@ export const Tabel = () => {
       });
       if (response.status === 200) {
         setIsModuleOpen(false);
+        getUsersData();
       }
-      console.log(response, id);
     },
-    [accounts, token],
+    [accounts, getUsersData, token],
   );
 
   const incrementPage = () => {
-    const page = pagesInfo[0].maxPage !== pageNumber ? pageNumber + 1 : pagesInfo[0].maxPage;
-    addParams([{key: 'page', value: page + 1}])
+    const page =
+      pagesInfo[0].maxPage !== pageNumber ? pageNumber + 1 : pagesInfo[0].maxPage;
+    addParams([{ key: 'page', value: page + 1 }]);
   };
 
   const decrementPage = () => {
     const page = pageNumber !== 0 ? pageNumber - 1 : 0;
-    addParams([{key: 'page', value: page + 1}])
+    addParams([{ key: 'page', value: page + 1 }]);
   };
-
 
   const openFormNamed = useCallback(() => {
     switch (modalNameOpen) {
@@ -250,7 +254,10 @@ export const Tabel = () => {
           <Search
             inputValue={inputValue}
             setInputValue={(value) => {
-              addParams([{ key: 'search', value }, { key: 'page', value: 1 }]);
+              addParams([
+                { key: 'search', value },
+                { key: 'page', value: 1 },
+              ]);
             }}
             isMobile={isMobile}
           />
@@ -294,7 +301,7 @@ export const Tabel = () => {
           items={usersList}
           setActiveUser={setActiveUser}
           setModalNameOpen={setModalNameOpen}
-          setSortedFrom={(value) =>  addParams([{key: 'direction', value}])}
+          setSortedFrom={(value) => addParams([{ key: 'direction', value }])}
           sortedFrom={sortedFrom}
           pageNumber={pageNumber}
           decrementPage={decrementPage}
