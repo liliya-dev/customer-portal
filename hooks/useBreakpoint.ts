@@ -24,6 +24,7 @@ export const useBreakpoint = (): {
 } => {
   const { breakpoint, width } = useBreakpoints({
     breakpoints: BREAKPOINTS,
+    debounceDelay: 1
   });
 
   return { breakpoint, screenWidth: width };

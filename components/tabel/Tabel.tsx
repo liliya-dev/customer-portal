@@ -15,7 +15,6 @@ import {
 } from '../form/Form';
 import { BREAKPOINTS, useBreakpoint } from '../../hooks/useBreakpoint';
 import { Dialog } from '../../components/dialog/Dialog';
-import { Spinner } from '../loaders/Spinner';
 import { SortOrder, UserFields, StaticState } from '../../types';
 
 import DataAPI from '../../api/data';
@@ -44,6 +43,11 @@ export const Tabel = () => {
   const isMobile = screenWidth < BREAKPOINTS.md;
   const storadgeKey = `${accounts[0].homeAccountId}-${accounts[0].environment}-idtoken-${accounts[0].idTokenClaims['aud']}-${accounts[0].tenantId}---`;
   const token = JSON.parse(sessionStorage.getItem(storadgeKey)).secret;
+
+  const getLastShowedResultNumber = () => {
+    let lastNumber = pagesInfo[0].perPage * (pageNumber + 1);
+    return lastNumber <= pagesInfo[0].total ? lastNumber : pagesInfo[0].total;
+  };
 
   const getUsersData = useCallback(async () => {
     const response = await dataAPI.getUsers({
@@ -129,7 +133,6 @@ export const Tabel = () => {
       if (response.status === 200) {
         setIsModuleOpen(false);
       }
-      console.log(response.status, name, email, role);
     },
     [accounts, token],
   );
@@ -225,7 +228,10 @@ export const Tabel = () => {
         <div className="flex flex-rows gap-3 lg:gap-6 justify-end">
           <Search
             inputValue={inputValue}
-            setInputValue={setInputValue}
+            setInputValue={(value) => {
+              setInputValue(value);
+              setPageNumber(0);
+            }}
             isMobile={isMobile}
           />
           <Button
@@ -248,6 +254,7 @@ export const Tabel = () => {
           setIsModuleOpen={setIsModuleOpen}
           handleSelectAll={handleSelectAll}
           handelCheckbox={handelCheckbox}
+          getLastShowedResultNumber={getLastShowedResultNumber}
           isCheck={checkedUsersList}
           isCheckAll={isCheckAll}
           pageNumber={pageNumber}
@@ -260,6 +267,7 @@ export const Tabel = () => {
           activeUser={activeUser}
           handelCheckbox={handelCheckbox}
           setIsModuleOpen={setIsModuleOpen}
+          getLastShowedResultNumber={getLastShowedResultNumber}
           handleSelectAll={handleSelectAll}
           isCheck={checkedUsersList}
           isCheckAll={isCheckAll}

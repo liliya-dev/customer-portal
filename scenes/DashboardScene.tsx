@@ -43,6 +43,7 @@ export const DashboardScene = () => {
       setState('error');
     }
   }, [accounts, token]);
+  
   return (
     <div>
       {state === 'success' && (
