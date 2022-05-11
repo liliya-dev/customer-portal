@@ -74,12 +74,12 @@ export const MobileTabel = ({
                 checked={isCheck.includes(_id)}
               />
             </div>
-            <div className="py-2 whitespace-nowrap flex flex-col items-center gap-4">
-              <div className="flex flex-rows items-center gap-4">
-                <Icon name="UserCircleBlue" className="w-8 h-8" />
-                <div className="flex flex-col">
-                  <p className="text-indigo-500 font-medium">{name}</p>
-                  <p className="text-indigo-300 font-normal">{email}</p>
+            <div className="py-2 flex flex-col items-center gap-4 w-full max-w-full overflow-hidden">
+              <div className="flex flex-rows items-center gap-4 w-full max-w-full">
+                <Icon name="UserCircleBlue" className="w-8 h-8 shrink-0" />
+                <div className="flex flex-col w-full w-[calc(100%-4rem)]">
+                  <p className="text-indigo-500  font-medium">{name}</p>
+                  <div className="break-words text-indigo-300 font-normal w-full max-w-full">{email}</div>
                 </div>
               </div>
             </div>
