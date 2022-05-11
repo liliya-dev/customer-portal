@@ -2,6 +2,11 @@ import React, { useState } from 'react';
 
 import { Title } from '../title/Title';
 import { Button } from '../buttons/Button';
+import {
+  checkValidateName,
+  checkValidateSurname,
+  checkValidateEmail,
+} from '../../helpers/utils/validatiors';
 
 const roleList = ['Member', 'Owner'];
 
@@ -13,6 +18,24 @@ const departmentList = [
 ];
 
 export const AddUserForm = ({ onSubmit }) => {
+  const [errors, setErrors] = useState([]);
+  const handelChange = ({ target }) => {
+    const { value, name } = target;
+    switch (name) {
+      case 'FirstName':
+        setErrors(checkValidateName(value, name));
+        break;
+      case 'LastName':
+        setErrors(checkValidateSurname(value));
+        break;
+      case 'Email':
+        setErrors(checkValidateEmail(value));
+        break;
+      default:
+        break;
+    }
+  };
+  console.log(errors);
   return (
     <form
       className="inline-block w-550 max-w-full"
@@ -28,6 +51,7 @@ export const AddUserForm = ({ onSubmit }) => {
           department: form.Department.value,
         });
       }}
+      onChange={handelChange}
     >
       <div className="shadow-xl bg-white border border-black border-opacity-5 text-center  px-8 py-4 lg:px-16 lg:py-10">
         <Title size="lg">Add User</Title>
@@ -61,6 +85,7 @@ export const AddUserForm = ({ onSubmit }) => {
           </div>
           <div>
             <select
+              required
               name="Role"
               id="role"
               className="border bg-white border-indigo-50 placeholder-indigo-300 md:text-base w-full"
@@ -75,6 +100,7 @@ export const AddUserForm = ({ onSubmit }) => {
           </div>
           <div className="lg:col-span-2 ">
             <select
+              required
               name="Department"
               id="department"
               className="border bg-white border-indigo-50 placeholder-indigo-300 md:text-base w-full"
@@ -85,6 +111,11 @@ export const AddUserForm = ({ onSubmit }) => {
               ))}
             </select>
           </div>
+          {errors.length && (
+            <p className="text-red-400 text-md text-center lg:col-span-2">
+              {errors[0].message}
+            </p>
+          )}
         </div>
         <Button
           label="Add"
@@ -102,7 +133,8 @@ export const AddUserForm = ({ onSubmit }) => {
 export const EditUserForm = ({ setIsModuleOpen, user, onSubmit }) => {
   const { name, email, _id, department } = user[0];
   const newName = name.split(' ');
-
+  // console.log(name);
+  // console.log(checkValidateName(name));
   const [firstName, setFirstName] = useState(name ? newName[0] : '');
   const [lastName, setLastName] = useState(name ? newName[1] : '');
   const [emailUser, setEmailUser] = useState(email ? email : '');
@@ -165,6 +197,7 @@ export const EditUserForm = ({ setIsModuleOpen, user, onSubmit }) => {
           </div>
           <div>
             <select
+              required
               name="role"
               id="role"
               className="border bg-white border-indigo-50 placeholder-indigo-300 md:text-base w-full"
@@ -181,6 +214,7 @@ export const EditUserForm = ({ setIsModuleOpen, user, onSubmit }) => {
           </div>
           <div className="lg:col-span-2 ">
             <select
+              required
               name="Department"
               id="department"
               className="border bg-white border-indigo-50 placeholder-indigo-300 md:text-base w-full"
