@@ -155,7 +155,6 @@ export const AddUserForm = ({ onSubmit }) => {
 
 export const EditUserForm = ({ setIsModuleOpen, user, onSubmit }) => {
   const [errors, setErrors] = useState([]);
-  console.log(user);
   const { name, email, _id, department } = user[0];
   const newName = name.split(' ');
   const [firstName, setFirstName] = useState(name ? newName[0] : '');
@@ -317,7 +316,6 @@ export const EditUserForm = ({ setIsModuleOpen, user, onSubmit }) => {
 };
 
 export const DeleteUserForm = ({ setIsModuleOpen, activeUser, onSubmit }) => {
-  console.log(activeUser);
   return (
     <form
       className="inline-block lg:w-[45vw]"
@@ -349,7 +347,7 @@ export const DeleteUserForm = ({ setIsModuleOpen, activeUser, onSubmit }) => {
 
 export const DeleteUsersForm = ({
   setIsModuleOpen,
-  isCheck,
+  checkedList,
   isCheckAll,
   onSubmit,
 }) => {
@@ -358,8 +356,7 @@ export const DeleteUsersForm = ({
       className="inline-block lg:w-[45vw]"
       onSubmit={(e) => {
         e.preventDefault();
-        console.log(isCheck);
-        isCheck.map((id) => onSubmit({ id }));
+        checkedList.map((id) => onSubmit({ id }));
       }}
     >
       <div className="shadow-xl bg-white border border-black border-opacity-5 text-center px-8 py-4 lg:px-16 lg:py-10">
@@ -370,7 +367,7 @@ export const DeleteUsersForm = ({
           </p>
         ) : (
           <p className="my-10 text-left font-normal leading-8">
-            Permanenly delete {isCheck.length} users? This can’t undo this.
+            Permanenly delete {checkedList.length} users? This can’t undo this.
           </p>
         )}
 

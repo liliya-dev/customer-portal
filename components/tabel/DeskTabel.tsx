@@ -1,7 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import cx from 'classnames';
 
-import { Paper } from '../paper/Paper';
 import { Icon } from '../icons/Icon';
 import { formatDate } from '../../helpers/utils/date';
 import { UserType } from '../../types';
@@ -18,7 +17,7 @@ export type DeskTabelProps = {
   setActiveUser: React.Dispatch<React.SetStateAction<string>>;
   activeUser: string;
   handelCheckbox: (e: any) => void;
-  isCheck: string[];
+  checkedList: string[];
   setIsModuleOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setModalNameOpen: React.Dispatch<React.SetStateAction<string>>;
   sortedFrom: string;
@@ -38,7 +37,7 @@ export const DeskTabel = ({
   setActiveUser,
   activeUser,
   handelCheckbox,
-  isCheck,
+  checkedList,
   setIsModuleOpen,
   setModalNameOpen,
   sortedFrom,
@@ -53,7 +52,6 @@ export const DeskTabel = ({
   const [showMenu, setShowMenu] = useState<boolean>(false);
 
   const handelSortBtn = (id) => {
-    console.log(id);
     if (id === sortBy) {
       sortedFrom === 'desc' ? setSortedFrom('asc') : setSortedFrom('desc');
     } else {
@@ -86,7 +84,7 @@ export const DeskTabel = ({
                   type="checkbox"
                   className="w-6 h-6 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                   onChange={handelCheckbox}
-                  checked={isCheck.includes(_id)}
+                  checked={checkedList.includes(_id)}
                 />
                 <label className="sr-only">checkbox</label>
               </div>
@@ -132,7 +130,7 @@ export const DeskTabel = ({
     [
       activeUser,
       handelCheckbox,
-      isCheck,
+      checkedList,
       setActiveUser,
       setIsModuleOpen,
       setModalNameOpen,
@@ -200,7 +198,7 @@ export const DeskTabel = ({
                 {getLastShowedResultNumber()} of {pagesInfo[0].total} results
               </p>
               <div className="flex gap-3">
-                {isCheck.length > 0 && (
+                {checkedList.length > 0 && (
                   <Button
                     theme="white"
                     as="button"

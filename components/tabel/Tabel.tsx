@@ -71,6 +71,7 @@ export const Tabel = () => {
   };
 
   const getUsersData = async () => {
+    setState('loading');
     const response = await dataAPI.getUsers({
       tid: accounts[0]?.tenantId,
       token,
@@ -80,10 +81,16 @@ export const Tabel = () => {
       orderedby: sortBy,
       direction: sortedFrom,
     });
-    console.log(response.total / response.perPage);
+
+    if (Math.ceil(response.total / +response.perPage) < +router.query?.page) {
+      addParams([
+        { key: 'page', value: Math.ceil(response.total / response.perPage) },
+      ]);
+      return;
+    }
     setPagesInfo([
       {
-        maxPage: Math.round(response.total / response.perPage),
+        maxPage: Math.ceil(response.total / response.perPage),
         total: response.total,
         perPage: Number(response.perPage),
       },
@@ -104,7 +111,6 @@ export const Tabel = () => {
 
   useEffect(() => {
     if (typeof window === undefined || !router.query) return;
-    setState('loading');
     getUsersData();
   }, [pageNumber, sortedFrom, debouncedInputValue, sortBy]);
 
@@ -129,76 +135,63 @@ export const Tabel = () => {
     setIsCheckAll(usersList.every(({ _id }) => checkedUsersList.includes(_id)));
   }, [checkedUsersList, checkedUsersList.length, usersList]);
 
-  const addUser = useCallback(
-    async ({ name, email, role, department }) => {
-      setState('loading');
-      const response = await dataAPI.addUser({
-        tid: accounts[0]?.tenantId,
-        token,
-        body: {
-          department,
-          license: 'FREE',
-          role,
-          email,
-          name,
-        },
-      });
-      if (response.status === 200) {
-        setUsersList([]);
-        setIsModuleOpen(false);
-        getUsersData();
-      }
-    },
-    [accounts, token],
-  );
+  const addUser = async ({ name, email, role, department }) => {
+    const response = await dataAPI.addUser({
+      tid: accounts[0]?.tenantId,
+      token,
+      body: {
+        department,
+        license: 'FREE',
+        role,
+        email,
+        name,
+      },
+    });
+    if (response.status === 200) {
+      setUsersList([]);
+      setIsModuleOpen(false);
+      getUsersData();
+    }
+  };
 
-  const editUser = useCallback(
-    async ({ name, email, role, id, department }) => {
-      setState('loading');
-      const response = await dataAPI.editUser({
-        tid: accounts[0]?.tenantId,
-        token,
-        userId: id,
-        body: {
-          name,
-          email,
-          role,
-          department,
-        },
-      });
-      if (response.status === 200) {
-        setIsModuleOpen(false);
-        getUsersData();
-      }
-    },
-    [accounts, token],
-  );
+  const editUser = async ({ name, email, role, id, department }) => {
+    const response = await dataAPI.editUser({
+      tid: accounts[0]?.tenantId,
+      token,
+      userId: id,
+      body: {
+        name,
+        email,
+        role,
+        department,
+      },
+    });
+    if (response.status === 200) {
+      setIsModuleOpen(false);
+      getUsersData();
+    }
+  };
 
-  const deleteUser = useCallback(
-    async ({ id }) => {
-      setState('loading');
-      const response = await dataAPI.deleteUser({
-        tid: accounts[0]?.tenantId,
-        token,
-        userId: id,
-      });
-      if (response.status === 200) {
-        setIsModuleOpen(false);
-        getUsersData();
-      }
-    },
-    [accounts, token],
-  );
+  const deleteUser = async ({ id }) => {
+    const response = await dataAPI.deleteUser({
+      tid: accounts[0]?.tenantId,
+      token,
+      userId: id,
+    });
+    if (response.status === 200) {
+      setCheckedUsersList([]);
+      setIsModuleOpen(false);
+      getUsersData();
+    }
+  };
 
   const incrementPage = () => {
-    setState('loading');
     const page =
       pagesInfo[0].maxPage !== pageNumber ? pageNumber + 1 : pagesInfo[0].maxPage;
     addParams([{ key: 'page', value: page + 1 }]);
   };
 
   const decrementPage = () => {
-    setState('loading');
     const page = pageNumber !== 0 ? pageNumber - 1 : 0;
     addParams([{ key: 'page', value: page + 1 }]);
   };
@@ -226,7 +219,7 @@ export const Tabel = () => {
       case 'deleteAll':
         return (
           <DeleteUsersForm
-            isCheck={checkedUsersList}
+            checkedList={checkedUsersList}
             setIsModuleOpen={setIsModuleOpen}
             onSubmit={deleteUser}
             isCheckAll={isCheckAll}
@@ -264,7 +257,7 @@ export const Tabel = () => {
   };
 
   return (
-    <div>
+    <div className="pb-20">
       <div className="flex flex-col lg:flex-row justify-between lg:items-center mb-5">
         <Title size="xs" className="mb-5">
           Users
@@ -273,10 +266,7 @@ export const Tabel = () => {
           <Search
             inputValue={inputValue}
             setInputValue={(value) => {
-              addParams([
-                { key: 'search', value },
-                { key: 'page', value: 1 },
-              ]);
+              addParams([{ key: 'search', value }]);
             }}
             isMobile={isMobile}
           />
@@ -293,44 +283,48 @@ export const Tabel = () => {
         </div>
       </div>
       <Paper>
-        {state === 'success' && isMobile ? (
-          <MobileTabel
-            items={usersList}
-            setActiveUser={setActiveUser}
-            setModalNameOpen={setModalNameOpen}
-            setIsModuleOpen={setIsModuleOpen}
-            handleSelectAll={handleSelectAll}
-            handelCheckbox={handelCheckbox}
-            getLastShowedResultNumber={getLastShowedResultNumber}
-            isCheck={checkedUsersList}
-            isCheckAll={isCheckAll}
-            pageNumber={pageNumber}
-            decrementPage={decrementPage}
-            incrementPage={incrementPage}
-            pagesInfo={pagesInfo}
-            setSort={(value) => addParams([{ key: 'sortBy', value }])}
-          />
-        ) : (
-          <DeskTabel
-            setSort={(value) => addParams(value)}
-            activeUser={activeUser}
-            handelCheckbox={handelCheckbox}
-            setIsModuleOpen={setIsModuleOpen}
-            getLastShowedResultNumber={getLastShowedResultNumber}
-            handleSelectAll={handleSelectAll}
-            isCheck={checkedUsersList}
-            isCheckAll={isCheckAll}
-            items={usersList}
-            setActiveUser={setActiveUser}
-            setModalNameOpen={setModalNameOpen}
-            setSortedFrom={(value) => addParams([{ key: 'direction', value }])}
-            sortBy={sortBy}
-            sortedFrom={sortedFrom}
-            pageNumber={pageNumber}
-            decrementPage={decrementPage}
-            incrementPage={incrementPage}
-            pagesInfo={pagesInfo}
-          />
+        {state === 'success' && (
+          <>
+            {isMobile ? (
+              <MobileTabel
+                items={usersList}
+                setActiveUser={setActiveUser}
+                setModalNameOpen={setModalNameOpen}
+                setIsModuleOpen={setIsModuleOpen}
+                handleSelectAll={handleSelectAll}
+                handelCheckbox={handelCheckbox}
+                getLastShowedResultNumber={getLastShowedResultNumber}
+                isCheck={checkedUsersList}
+                isCheckAll={isCheckAll}
+                pageNumber={pageNumber}
+                decrementPage={decrementPage}
+                incrementPage={incrementPage}
+                pagesInfo={pagesInfo}
+                setSort={(value) => addParams([{ key: 'sortBy', value }])}
+              />
+            ) : (
+              <DeskTabel
+                setSort={(value) => addParams(value)}
+                activeUser={activeUser}
+                handelCheckbox={handelCheckbox}
+                setIsModuleOpen={setIsModuleOpen}
+                getLastShowedResultNumber={getLastShowedResultNumber}
+                handleSelectAll={handleSelectAll}
+                checkedList={checkedUsersList}
+                isCheckAll={isCheckAll}
+                items={usersList}
+                setActiveUser={setActiveUser}
+                setModalNameOpen={setModalNameOpen}
+                setSortedFrom={(value) => addParams([{ key: 'direction', value }])}
+                sortBy={sortBy}
+                sortedFrom={sortedFrom}
+                pageNumber={pageNumber}
+                decrementPage={decrementPage}
+                incrementPage={incrementPage}
+                pagesInfo={pagesInfo}
+              />
+            )}
+          </>
         )}
 
         {state === 'loading' && (
@@ -347,7 +341,7 @@ export const Tabel = () => {
             <p className="font-bold">No results matching your criteria.</p>
           </div>
         )}
-        {usersList.length === 0 && inputValue !== '' && state !== 'loading' && (
+        {usersList.length === 0 && inputValue === '' && state !== 'loading' && (
           <div className="flex gap-4 flex-col min-h-max py-10 items-center justify-center text-indigo-500">
             <Icon name="UserPlus" className="w-10 h-10" />
             <p className="font-bold">Need to add first user.</p>
