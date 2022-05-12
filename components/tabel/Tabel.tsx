@@ -4,6 +4,7 @@ import { useDebounce } from '../../hooks/useDebounce';
 import { DeskTabelMemo as DeskTabel } from './DeskTabel';
 import { MobileTabelMemo as MobileTabel } from './MobileTabel';
 import { Button } from '../../components/buttons/Button';
+import { Icon } from '../icons/Icon';
 import { Title } from '../title/Title';
 import { Search } from '../search/Search';
 import {
@@ -19,6 +20,7 @@ import { UserFields, StaticState } from '../../types';
 
 import DataAPI from '../../api/data';
 import { useRouter } from 'next/router';
+import { Paper } from '../paper/Paper';
 
 export type ParamsListType = {
   key: string;
@@ -78,7 +80,7 @@ export const Tabel = () => {
       orderedby: sortBy,
       direction: sortedFrom,
     });
-
+    console.log(response.total / response.perPage);
     setPagesInfo([
       {
         maxPage: Math.round(response.total / response.perPage),
@@ -129,6 +131,7 @@ export const Tabel = () => {
 
   const addUser = useCallback(
     async ({ name, email, role, department }) => {
+      setState('loading');
       const response = await dataAPI.addUser({
         tid: accounts[0]?.tenantId,
         token,
@@ -141,6 +144,7 @@ export const Tabel = () => {
         },
       });
       if (response.status === 200) {
+        setUsersList([]);
         setIsModuleOpen(false);
         getUsersData();
       }
@@ -150,6 +154,7 @@ export const Tabel = () => {
 
   const editUser = useCallback(
     async ({ name, email, role, id, department }) => {
+      setState('loading');
       const response = await dataAPI.editUser({
         tid: accounts[0]?.tenantId,
         token,
@@ -162,6 +167,7 @@ export const Tabel = () => {
         },
       });
       if (response.status === 200) {
+        setUsersList([]);
         setIsModuleOpen(false);
         getUsersData();
       }
@@ -171,12 +177,14 @@ export const Tabel = () => {
 
   const deleteUser = useCallback(
     async ({ id }) => {
+      setState('loading');
       const response = await dataAPI.deleteUser({
         tid: accounts[0]?.tenantId,
         token,
         userId: id,
       });
       if (response.status === 200) {
+        setUsersList([]);
         setIsModuleOpen(false);
         getUsersData();
       }
@@ -185,12 +193,14 @@ export const Tabel = () => {
   );
 
   const incrementPage = () => {
+    setState('loading');
     const page =
       pagesInfo[0].maxPage !== pageNumber ? pageNumber + 1 : pagesInfo[0].maxPage;
     addParams([{ key: 'page', value: page + 1 }]);
   };
 
   const decrementPage = () => {
+    setState('loading');
     const page = pageNumber !== 0 ? pageNumber - 1 : 0;
     addParams([{ key: 'page', value: page + 1 }]);
   };
@@ -284,53 +294,68 @@ export const Tabel = () => {
           />
         </div>
       </div>
-      {isMobile ? (
-        <MobileTabel
-          items={usersList}
-          setActiveUser={setActiveUser}
-          setModalNameOpen={setModalNameOpen}
-          setIsModuleOpen={setIsModuleOpen}
-          handleSelectAll={handleSelectAll}
-          handelCheckbox={handelCheckbox}
-          getLastShowedResultNumber={getLastShowedResultNumber}
-          isCheck={checkedUsersList}
-          isCheckAll={isCheckAll}
-          pageNumber={pageNumber}
-          decrementPage={decrementPage}
-          incrementPage={incrementPage}
-          pagesInfo={pagesInfo}
-          state={state}
-          setSort={(value) => addParams([{ key: 'sortBy', value }])}
-        />
-      ) : (
-        <DeskTabel
-          setSort={(value) => addParams(value)}
-          activeUser={activeUser}
-          handelCheckbox={handelCheckbox}
-          setIsModuleOpen={setIsModuleOpen}
-          getLastShowedResultNumber={getLastShowedResultNumber}
-          handleSelectAll={handleSelectAll}
-          isCheck={checkedUsersList}
-          isCheckAll={isCheckAll}
-          items={usersList}
-          setActiveUser={setActiveUser}
-          setModalNameOpen={setModalNameOpen}
-          setSortedFrom={(value) => addParams([{ key: 'direction', value }])}
-          sortBy={sortBy}
-          sortedFrom={sortedFrom}
-          pageNumber={pageNumber}
-          decrementPage={decrementPage}
-          incrementPage={incrementPage}
-          pagesInfo={pagesInfo}
-        />
-      )}
-      {state === 'loading' && (
-        <div className="w-full my-12 flex justify-center">
-          <div className="w-20 h-20">
-            <Spinner />
+      <Paper>
+        {isMobile ? (
+          <MobileTabel
+            items={usersList}
+            setActiveUser={setActiveUser}
+            setModalNameOpen={setModalNameOpen}
+            setIsModuleOpen={setIsModuleOpen}
+            handleSelectAll={handleSelectAll}
+            handelCheckbox={handelCheckbox}
+            getLastShowedResultNumber={getLastShowedResultNumber}
+            isCheck={checkedUsersList}
+            isCheckAll={isCheckAll}
+            pageNumber={pageNumber}
+            decrementPage={decrementPage}
+            incrementPage={incrementPage}
+            pagesInfo={pagesInfo}
+            setSort={(value) => addParams([{ key: 'sortBy', value }])}
+          />
+        ) : (
+          <DeskTabel
+            setSort={(value) => addParams(value)}
+            activeUser={activeUser}
+            handelCheckbox={handelCheckbox}
+            setIsModuleOpen={setIsModuleOpen}
+            getLastShowedResultNumber={getLastShowedResultNumber}
+            handleSelectAll={handleSelectAll}
+            isCheck={checkedUsersList}
+            isCheckAll={isCheckAll}
+            items={usersList}
+            setActiveUser={setActiveUser}
+            setModalNameOpen={setModalNameOpen}
+            setSortedFrom={(value) => addParams([{ key: 'direction', value }])}
+            sortBy={sortBy}
+            sortedFrom={sortedFrom}
+            pageNumber={pageNumber}
+            decrementPage={decrementPage}
+            incrementPage={incrementPage}
+            pagesInfo={pagesInfo}
+          />
+        )}
+        {state === 'loading' && (
+          <div className="w-full py-12 flex justify-center">
+            <div className="w-20 h-20">
+              <Spinner />
+            </div>
           </div>
-        </div>
-      )}
+        )}
+
+        {usersList.length === 0 && inputValue !== '' && state !== 'loading' && (
+          <div className="flex gap-4 flex-col min-h-max py-10 items-center justify-center text-indigo-500">
+            <Icon name="CommonFileSearch" className="w-10 h-10" />
+            <p className="font-bold">No results matching your criteria.</p>
+          </div>
+        )}
+
+        {usersList.length === 0 && state === 'success' && !inputValue && (
+          <div className="flex gap-4 flex-col min-h-max py-10 items-center justify-center text-indigo-500">
+            <Icon name="UserPlus" className="w-10 h-10" />
+            <p className="font-bold">Need to add first user.</p>
+          </div>
+        )}
+      </Paper>
       <Dialog mode="form" onOpenChange={setIsModuleOpen} open={isModuleOpen}>
         {openFormNamed()}
       </Dialog>

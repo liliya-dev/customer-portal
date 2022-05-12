@@ -21,7 +21,6 @@ export type MobileTabelProps = {
   incrementPage: () => void;
   pagesInfo: { total: number; maxPage: number; perPage: number }[];
   getLastShowedResultNumber: () => number;
-  state: string;
   setSort: () => string;
 };
 
@@ -39,7 +38,6 @@ export const MobileTabel = ({
   incrementPage,
   pagesInfo,
   getLastShowedResultNumber,
-  state,
   setSort,
 }) => {
   const [isOpen, setIsOpen] = useState([]);
@@ -173,12 +171,6 @@ export const MobileTabel = ({
             </div>
             <div>{trElement(items)}</div>
 
-            {state === 'success' && items.length === 0 && (
-              <div className="flex gap-4 flex-col min-h-max py-10 items-center justify-center">
-                <Icon name="UserPlus" className="w-10 h-10" />
-                <p>Need create first user</p>
-              </div>
-            )}
             {items.length > 0 && pagesInfo[0].maxPage > 0 && (
               <div className="px-2 py-3">
                 <div className="flex items-center justify-between">

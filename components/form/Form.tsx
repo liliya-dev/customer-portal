@@ -155,6 +155,7 @@ export const AddUserForm = ({ onSubmit }) => {
 
 export const EditUserForm = ({ setIsModuleOpen, user, onSubmit }) => {
   const [errors, setErrors] = useState([]);
+  console.log(user);
   const { name, email, _id, department } = user[0];
   const newName = name.split(' ');
   const [firstName, setFirstName] = useState(name ? newName[0] : '');
