@@ -1,22 +1,19 @@
 import { useMsal } from '@azure/msal-react';
 import React, { useState, useEffect, useCallback } from 'react';
 import { useDebounce } from '../../hooks/useDebounce';
+
 import { DeskTabelMemo as DeskTabel } from './DeskTabel';
 import { MobileTabelMemo as MobileTabel } from './MobileTabel';
+import { UsersListMemo as UsersList } from '../../scenes/UsersList';
+import { OpenFormMemo as OpenForm } from '../../scenes/OpenForm';
 import { Button } from '../../components/buttons/Button';
 import { Icon } from '../icons/Icon';
 import { Title } from '../title/Title';
 import { Search } from '../search/Search';
-import {
-  AddUserForm,
-  EditUserForm,
-  DeleteUserForm,
-  DeleteUsersForm,
-} from '../form/Form';
 import { BREAKPOINTS, useBreakpoint } from '../../hooks/useBreakpoint';
 import { Dialog } from '../../components/dialog/Dialog';
 import { Spinner } from '../loaders/Spinner';
-import { UserFields, StaticState } from '../../types';
+import { UserFields, StaticState, StaticFormName } from '../../types';
 
 import DataAPI from '../../api/data';
 import { useRouter } from 'next/router';
@@ -37,6 +34,7 @@ const dataAPI = new DataAPI();
 export const Tabel = () => {
   const { accounts } = useMsal();
   const { screenWidth } = useBreakpoint();
+  const router = useRouter();
 
   const [state, setState] = useState<StaticState>('idle');
   const [usersList, setUsersList] = useState<UserFields[]>([]);
@@ -44,10 +42,7 @@ export const Tabel = () => {
   const [isCheckAll, setIsCheckAll] = useState<boolean>(false);
   const [isModuleOpen, setIsModuleOpen] = useState<boolean>(false);
   const [checkedUsersList, setCheckedUsersList] = useState<string[]>([]);
-  const [modalNameOpen, setModalNameOpen] = useState<
-    'edit' | 'add' | 'delete' | 'deleteAll'
-  >('add');
-  const router = useRouter();
+  const [modalNameOpen, setModalNameOpen] = useState<StaticFormName>('add');
   const [inputValue, setInputValue] = useState<string>(
     firstOf(router.query?.search) || '',
   );
@@ -196,49 +191,6 @@ export const Tabel = () => {
     addParams([{ key: 'page', value: page + 1 }]);
   };
 
-  const openFormNamed = useCallback(() => {
-    switch (modalNameOpen) {
-      case 'add':
-        return <AddUserForm onSubmit={addUser} />;
-      case 'edit':
-        return (
-          <EditUserForm
-            setIsModuleOpen={setIsModuleOpen}
-            user={usersList.filter((item) => item._id === activeUser)}
-            onSubmit={editUser}
-          />
-        );
-      case 'delete':
-        return (
-          <DeleteUserForm
-            setIsModuleOpen={setIsModuleOpen}
-            onSubmit={deleteUser}
-            activeUser={activeUser}
-          />
-        );
-      case 'deleteAll':
-        return (
-          <DeleteUsersForm
-            checkedList={checkedUsersList}
-            setIsModuleOpen={setIsModuleOpen}
-            onSubmit={deleteUser}
-            isCheckAll={isCheckAll}
-          />
-        );
-      default:
-        break;
-    }
-  }, [
-    activeUser,
-    addUser,
-    deleteUser,
-    editUser,
-    checkedUsersList,
-    isCheckAll,
-    modalNameOpen,
-    usersList,
-  ]);
-
   const handleSelectAll = (e) => {
     setIsCheckAll(!isCheckAll);
     setCheckedUsersList([...checkedUsersList, ...usersList.map((item) => item._id)]);
@@ -288,32 +240,38 @@ export const Tabel = () => {
             {isMobile ? (
               <MobileTabel
                 items={usersList}
-                setActiveUser={setActiveUser}
                 setModalNameOpen={setModalNameOpen}
                 setIsModuleOpen={setIsModuleOpen}
                 handleSelectAll={handleSelectAll}
-                handelCheckbox={handelCheckbox}
                 getLastShowedResultNumber={getLastShowedResultNumber}
-                isCheck={checkedUsersList}
+                checkedList={checkedUsersList}
                 isCheckAll={isCheckAll}
                 pageNumber={pageNumber}
                 decrementPage={decrementPage}
                 incrementPage={incrementPage}
                 pagesInfo={pagesInfo}
                 setSort={(value) => addParams([{ key: 'sortBy', value }])}
-              />
+              >
+                <UsersList
+                  activeUser={activeUser}
+                  checkedList={checkedUsersList}
+                  handelCheckbox={handelCheckbox}
+                  isMobile={isMobile}
+                  items={usersList}
+                  setActiveUser={setActiveUser}
+                  setIsModuleOpen={setIsModuleOpen}
+                  setModalNameOpen={setModalNameOpen}
+                />
+              </MobileTabel>
             ) : (
               <DeskTabel
                 setSort={(value) => addParams(value)}
-                activeUser={activeUser}
-                handelCheckbox={handelCheckbox}
                 setIsModuleOpen={setIsModuleOpen}
                 getLastShowedResultNumber={getLastShowedResultNumber}
                 handleSelectAll={handleSelectAll}
                 checkedList={checkedUsersList}
                 isCheckAll={isCheckAll}
                 items={usersList}
-                setActiveUser={setActiveUser}
                 setModalNameOpen={setModalNameOpen}
                 setSortedFrom={(value) => addParams([{ key: 'direction', value }])}
                 sortBy={sortBy}
@@ -322,7 +280,18 @@ export const Tabel = () => {
                 decrementPage={decrementPage}
                 incrementPage={incrementPage}
                 pagesInfo={pagesInfo}
-              />
+              >
+                <UsersList
+                  activeUser={activeUser}
+                  checkedList={checkedUsersList}
+                  handelCheckbox={handelCheckbox}
+                  isMobile={isMobile}
+                  items={usersList}
+                  setActiveUser={setActiveUser}
+                  setIsModuleOpen={setIsModuleOpen}
+                  setModalNameOpen={setModalNameOpen}
+                />
+              </DeskTabel>
             )}
           </>
         )}
@@ -349,7 +318,17 @@ export const Tabel = () => {
         )}
       </Paper>
       <Dialog mode="form" onOpenChange={setIsModuleOpen} open={isModuleOpen}>
-        {openFormNamed()}
+        <OpenForm
+          activeUser={activeUser}
+          addUser={addUser}
+          checkedUsersList={checkedUsersList}
+          deleteUser={deleteUser}
+          editUser={editUser}
+          isCheckAll={isCheckAll}
+          items={usersList}
+          modalNameOpen={modalNameOpen}
+          setIsModuleOpen={setIsModuleOpen}
+        />
       </Dialog>
     </div>
   );

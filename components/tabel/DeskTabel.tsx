@@ -1,12 +1,11 @@
-import React, { useState, useCallback } from 'react';
+import React from 'react';
 import cx from 'classnames';
 
 import { Icon } from '../icons/Icon';
-import { formatDate } from '../../helpers/utils/date';
 import { UserType } from '../../types';
-import { truncate } from '../../helpers/utils/string';
 import { Button } from '../buttons/Button';
 import { ParamsListType } from './Tabel';
+import { tableHeaders } from './TabelOptions';
 
 export type DeskTabelProps = {
   sortBy: string;
@@ -14,9 +13,6 @@ export type DeskTabelProps = {
   items: UserType[];
   handleSelectAll: (e: any) => void;
   isCheckAll: boolean;
-  setActiveUser: React.Dispatch<React.SetStateAction<string>>;
-  activeUser: string;
-  handelCheckbox: (e: any) => void;
   checkedList: string[];
   setIsModuleOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setModalNameOpen: React.Dispatch<React.SetStateAction<string>>;
@@ -27,6 +23,7 @@ export type DeskTabelProps = {
   incrementPage: () => void;
   pagesInfo: { total: number; maxPage: number; perPage: number }[];
   getLastShowedResultNumber: () => number;
+  children: any;
 };
 
 export const DeskTabel = ({
@@ -34,9 +31,6 @@ export const DeskTabel = ({
   items,
   handleSelectAll,
   isCheckAll,
-  setActiveUser,
-  activeUser,
-  handelCheckbox,
   checkedList,
   setIsModuleOpen,
   setModalNameOpen,
@@ -48,9 +42,8 @@ export const DeskTabel = ({
   pagesInfo,
   getLastShowedResultNumber,
   sortBy,
+  children,
 }: DeskTabelProps) => {
-  const [showMenu, setShowMenu] = useState<boolean>(false);
-
   const handelSortBtn = (id) => {
     if (id === sortBy) {
       sortedFrom === 'desc' ? setSortedFrom('asc') : setSortedFrom('desc');
@@ -61,89 +54,6 @@ export const DeskTabel = ({
       ]);
     }
   };
-
-  const trElement = useCallback(
-    (items) =>
-      items.map(({ department, email, role, name, lastActiveDate, _id }, i) => {
-        return (
-          <tr
-            key={i}
-            className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-blue-50 dark:hover:bg-gray-600"
-            onMouseOver={() => {
-              setActiveUser(_id);
-              setShowMenu(true);
-            }}
-            onMouseOut={() => {
-              setShowMenu(false);
-            }}
-          >
-            <td className="w-4 p-5">
-              <div className="flex items-center">
-                <input
-                  id={_id}
-                  type="checkbox"
-                  className="w-6 h-6 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                  onChange={handelCheckbox}
-                  checked={checkedList.includes(_id)}
-                />
-                <label className="sr-only">checkbox</label>
-              </div>
-            </td>
-            <th scope="row" className="whitespace-nowrap">
-              <div className="flex items-center gap-4">
-                <Icon name="UserCircleBlue" className="w-10 h-10" />
-                <div>
-                  <p>{name}</p>
-                  <p className="text-indigo-300 font-normal">{email}</p>
-                </div>
-              </div>
-            </th>
-            <td className="text-indigo-300">{department}</td>
-            <td className="text-indigo-300">{formatDate(lastActiveDate)}</td>
-            <td className="text-indigo-300 cursor-pointer md:w-24 lg:w-28">
-              {showMenu && activeUser === _id ? (
-                <div className="flex justify-around ">
-                  <div
-                    onClick={() => {
-                      setIsModuleOpen(true);
-                      setModalNameOpen('edit');
-                    }}
-                  >
-                    <Icon name="PencilIcon" className="w-6 h-6 text-blue-500" />
-                  </div>
-                  <div
-                    onClick={() => {
-                      setIsModuleOpen(true);
-                      setModalNameOpen('delete');
-                    }}
-                  >
-                    <Icon name="TrashIcon" className="w-6 h-6 text-blue-500" />
-                  </div>
-                </div>
-              ) : (
-                <p className="pr-4">{truncate(role, 15)}</p>
-              )}
-            </td>
-          </tr>
-        );
-      }),
-    [
-      activeUser,
-      handelCheckbox,
-      checkedList,
-      setActiveUser,
-      setIsModuleOpen,
-      setModalNameOpen,
-      showMenu,
-    ],
-  );
-
-  const tableHeaders = [
-    { name: 'Name', id: 'name' },
-    { name: 'Department', id: 'department' },
-    { name: 'Last Active', id: 'lastActiveDate' },
-    { name: 'Role', id: 'role' },
-  ];
 
   return (
     <div className="flex gap-5 flex-col mb-4">
@@ -188,7 +98,7 @@ export const DeskTabel = ({
               ))}
             </tr>
           </thead>
-          <tbody>{trElement(items)}</tbody>
+          <tbody>{children}</tbody>
         </table>
         {items.length > 0 && pagesInfo[0].maxPage > 0 && (
           <div className="py-3 px-6 bg-white shadow-md border-b">

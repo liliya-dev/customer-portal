@@ -15,6 +15,8 @@ export type SortOrder = 'asc' | 'desc';
 
 export type StaticState = 'loading' | 'idle' | 'success' | 'error';
 
+export type StaticFormName = 'edit' | 'add' | 'delete' | 'deleteAll';
+
 export const COLORS = {
   blue: '#496fff',
   lightblue: '#f7fafc',

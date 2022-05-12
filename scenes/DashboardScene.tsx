@@ -29,7 +29,7 @@ export const DashboardScene = () => {
           tid: accounts[0]?.tenantId,
           token,
         });
-        console.log(response.organizationData[0]);
+
         setAssignedLicensesCount(
           response.organizationData[0].assigned_licenses_count,
         );
