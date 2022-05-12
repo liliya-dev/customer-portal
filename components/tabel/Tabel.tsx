@@ -14,10 +14,16 @@ import {
 } from '../form/Form';
 import { BREAKPOINTS, useBreakpoint } from '../../hooks/useBreakpoint';
 import { Dialog } from '../../components/dialog/Dialog';
-import { SortOrder, UserFields, StaticState } from '../../types';
 import { Spinner } from '../loaders/Spinner';
+import { UserFields, StaticState } from '../../types';
+
 import DataAPI from '../../api/data';
 import { useRouter } from 'next/router';
+
+export type ParamsListType = {
+  key: string;
+  value: string | number;
+};
 
 export function firstOf(val: string[] | string) {
   const firstValue = Array.isArray(val) ? val[0] : val;
@@ -45,10 +51,13 @@ export const Tabel = () => {
   );
   const [pageNumber, setPageNumber] = useState<number>(+router.query?.page - 1 || 0);
   const [pagesInfo, setPagesInfo] = useState([]);
+  const [sortBy, setSortBy] = useState<string>(
+    firstOf(router.query?.sortBy) || 'name',
+  );
   const [sortedFrom, setSortedFrom] = useState<string>(
     firstOf(router.query?.direction) || 'asc',
   );
-  console.log(usersList);
+
   const debouncedInputValue = useDebounce(inputValue, 500);
   const isMobile = screenWidth < BREAKPOINTS.md;
   const storadgeKey = `${accounts[0].homeAccountId}-${accounts[0].environment}-idtoken-${accounts[0].idTokenClaims['aud']}-${accounts[0].tenantId}---`;
@@ -66,7 +75,7 @@ export const Tabel = () => {
       query: debouncedInputValue,
       page: pageNumber,
       perPage: 10,
-      orderedby: 'name',
+      orderedby: sortBy,
       direction: sortedFrom,
     });
 
@@ -88,15 +97,16 @@ export const Tabel = () => {
     const sortDirection = firstOf(router.query?.direction);
     setSortedFrom(sortDirection);
     setInputValue(firstOf(router.query?.search) || '');
+    setSortBy(firstOf(router.query?.sortBy) || '');
   }, [router.query]);
 
   useEffect(() => {
     if (typeof window === undefined || !router.query) return;
     setState('loading');
     getUsersData();
-  }, [pageNumber, sortedFrom, debouncedInputValue]);
+  }, [pageNumber, sortedFrom, debouncedInputValue, sortBy]);
 
-  const addParams = (list = []) => {
+  const addParams = (list: ParamsListType[] = []) => {
     let newPairs = {};
     list.forEach(({ key, value }) => {
       newPairs[key] = value;
@@ -290,9 +300,11 @@ export const Tabel = () => {
           incrementPage={incrementPage}
           pagesInfo={pagesInfo}
           state={state}
+          setSort={(value) => addParams([{ key: 'sortBy', value }])}
         />
       ) : (
         <DeskTabel
+          setSort={(value) => addParams(value)}
           activeUser={activeUser}
           handelCheckbox={handelCheckbox}
           setIsModuleOpen={setIsModuleOpen}
@@ -304,6 +316,7 @@ export const Tabel = () => {
           setActiveUser={setActiveUser}
           setModalNameOpen={setModalNameOpen}
           setSortedFrom={(value) => addParams([{ key: 'direction', value }])}
+          sortBy={sortBy}
           sortedFrom={sortedFrom}
           pageNumber={pageNumber}
           decrementPage={decrementPage}
