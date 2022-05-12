@@ -5,7 +5,7 @@ import { Input } from '../../components/input/Input';
 
 export type SearchProp = {
   inputValue: string;
-  setInputValue: React.Dispatch<React.SetStateAction<string>>;
+  setInputValue: (value: string) => void;
   isMobile: boolean;
 };
 
