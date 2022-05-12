@@ -5,7 +5,7 @@ import { formatDate } from '../helpers/utils/date';
 import { truncate } from '../helpers/utils/string';
 import { UserType } from '../types';
 
-export type UsersListProps = {
+export type UsersListSceneProps = {
   items: UserType[];
   setActiveUser: React.Dispatch<React.SetStateAction<string>>;
   setIsModuleOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -16,7 +16,7 @@ export type UsersListProps = {
   isMobile: boolean;
 };
 
-export const UsersList = ({
+export const UsersListScene = ({
   items,
   setActiveUser,
   setIsModuleOpen,
@@ -25,7 +25,7 @@ export const UsersList = ({
   activeUser,
   checkedList,
   isMobile,
-}: UsersListProps) => {
+}: UsersListSceneProps) => {
   const [isOpen, setIsOpen] = useState([]);
   const [showMenu, setShowMenu] = useState<boolean>(false);
 
@@ -195,4 +195,4 @@ export const UsersList = ({
   return isMobile ? trMobileElment(items) : trElement(items);
 };
 
-export const UsersListMemo = React.memo(UsersList);
+export const UsersListSceneMemo = React.memo(UsersListScene);

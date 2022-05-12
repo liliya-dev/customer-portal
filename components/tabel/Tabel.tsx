@@ -4,14 +4,14 @@ import { useDebounce } from '../../hooks/useDebounce';
 
 import { DeskTabelMemo as DeskTabel } from './DeskTabel';
 import { MobileTabelMemo as MobileTabel } from './MobileTabel';
-import { UsersListMemo as UsersList } from '../../scenes/UsersList';
-import { OpenFormMemo as OpenForm } from '../../scenes/OpenForm';
-import { Button } from '../../components/buttons/Button';
+import { UsersListSceneMemo as UsersList } from '../../scenes/UsersListScene';
+import { OpenFormSceneMemo as OpenForm } from '../../scenes/OpenFormScene';
+import { ButtonMemo as Button } from '../../components/buttons/Button';
 import { Icon } from '../icons/Icon';
-import { Title } from '../title/Title';
-import { Search } from '../search/Search';
+import { TitleMemo as Title } from '../title/Title';
+import { SearchMemo as Search } from '../search/Search';
 import { BREAKPOINTS, useBreakpoint } from '../../hooks/useBreakpoint';
-import { Dialog } from '../../components/dialog/Dialog';
+import { DialogMemo as Dialog } from '../../components/dialog/Dialog';
 import { Spinner } from '../loaders/Spinner';
 import { UserFields, StaticState, StaticFormName } from '../../types';
 

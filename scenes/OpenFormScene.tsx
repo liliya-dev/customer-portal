@@ -5,7 +5,7 @@ import { EditUserFormMemo as EditUserForm } from '../components/form/EditUserFor
 import { DeleteUserFormMemo as DeleteUserForm } from '../components/form/DeleteUserForm';
 import { DeleteUsersForm as DeleteUsersForm } from '../components/form/DeleteUsersForm';
 
-export type OpenFormProps = {
+export type OpenFormSceneProps = {
   modalNameOpen: string;
   addUser: any;
   setIsModuleOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -16,7 +16,7 @@ export type OpenFormProps = {
   checkedUsersList: string[];
   isCheckAll: boolean;
 };
-export const OpenForm = ({
+export const OpenFormScene = ({
   modalNameOpen,
   addUser,
   setIsModuleOpen,
@@ -26,8 +26,7 @@ export const OpenForm = ({
   activeUser,
   checkedUsersList,
   isCheckAll,
-}: OpenFormProps) => {
-  console.log(items);
+}: OpenFormSceneProps) => {
   const openFormNamed = () => {
     switch (modalNameOpen) {
       case 'add':
@@ -64,4 +63,4 @@ export const OpenForm = ({
   return openFormNamed();
 };
 
-export const OpenFormMemo = React.memo(OpenForm);
+export const OpenFormSceneMemo = React.memo(OpenFormScene);

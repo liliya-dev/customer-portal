@@ -6,7 +6,7 @@ import { useRouter } from 'next/router';
 import { Button } from '../../components/buttons/Button';
 import { SizeType } from '../../components/buttons/ButtonOptions';
 import { useBreakpoint } from '../../hooks/useBreakpoint';
-import { FullScreenModal } from '../../components/modals/FullScreenModal';
+import { FullScreenModalMemo as FullScreenModal } from '../../components/modals/FullScreenModal';
 import { menuItems } from '../LayoutOptions';
 import { Icon } from '../../components/icons/Icon';
 

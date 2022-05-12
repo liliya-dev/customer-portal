@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 import { Icon } from '../icons/Icon';
-import { Input } from '../../components/input/Input';
+import { InputMemo as Input } from '../../components/input/Input';
 
 export type SearchProp = {
   inputValue: string;
@@ -82,3 +82,5 @@ export const Search = ({ inputValue, setInputValue, isMobile }: SearchProp) => {
     </div>
   );
 };
+
+export const SearchMemo = React.memo(Search);

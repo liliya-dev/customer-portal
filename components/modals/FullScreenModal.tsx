@@ -36,3 +36,5 @@ export const FullScreenModal = ({
     </Portal>
   );
 };
+
+export const FullScreenModalMemo = React.memo(FullScreenModal);

@@ -9,7 +9,7 @@ import LogoImage from '../../public/logo.svg';
 
 import { DeskNavMemo as DeskNav } from './DeskNav';
 import { MobileNavMemo as MobileNav } from './MobileNav';
-import { Title } from '../../components/title/Title';
+import { TitleMemo as Title } from '../../components/title/Title';
 
 export type NavProps = {
   showUserMenu?: boolean;
