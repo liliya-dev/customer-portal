@@ -167,7 +167,6 @@ export const Tabel = () => {
         },
       });
       if (response.status === 200) {
-        setUsersList([]);
         setIsModuleOpen(false);
         getUsersData();
       }
@@ -184,7 +183,6 @@ export const Tabel = () => {
         userId: id,
       });
       if (response.status === 200) {
-        setUsersList([]);
         setIsModuleOpen(false);
         getUsersData();
       }
@@ -295,7 +293,7 @@ export const Tabel = () => {
         </div>
       </div>
       <Paper>
-        {isMobile ? (
+        {state === 'success' && isMobile ? (
           <MobileTabel
             items={usersList}
             setActiveUser={setActiveUser}
@@ -334,6 +332,7 @@ export const Tabel = () => {
             pagesInfo={pagesInfo}
           />
         )}
+
         {state === 'loading' && (
           <div className="w-full py-12 flex justify-center">
             <div className="w-20 h-20">
@@ -348,8 +347,7 @@ export const Tabel = () => {
             <p className="font-bold">No results matching your criteria.</p>
           </div>
         )}
-
-        {usersList.length === 0 && state === 'success' && !inputValue && (
+        {usersList.length === 0 && inputValue !== '' && state !== 'loading' && (
           <div className="flex gap-4 flex-col min-h-max py-10 items-center justify-center text-indigo-500">
             <Icon name="UserPlus" className="w-10 h-10" />
             <p className="font-bold">Need to add first user.</p>
