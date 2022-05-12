@@ -81,7 +81,7 @@ export const MobileTabel = ({
             <div className="py-2 flex flex-col items-center gap-4 w-full max-w-full overflow-hidden">
               <div className="flex flex-rows items-center gap-4 w-full max-w-full">
                 <Icon name="UserCircleBlue" className="w-8 h-8 shrink-0" />
-                <div className="flex flex-col w-full w-[calc(100%-4rem)]">
+                <div className="flex flex-col w-[calc(100%-4rem)]">
                   <p className="text-indigo-500  font-medium">{name}</p>
                   <div className="break-words text-indigo-300 font-normal w-full max-w-full">
                     {email}
@@ -98,6 +98,7 @@ export const MobileTabel = ({
               )}
             </div>
           </div>
+
           {isOpen.includes(_id) && (
             <div className="px-12 flex flex-col gap-2">
               <div className="flex justify-between">
@@ -141,8 +142,7 @@ export const MobileTabel = ({
         </div>
       );
     });
-  items = [];
-
+  if (!items) return;
   return (
     <div>
       <Paper>
@@ -173,6 +173,12 @@ export const MobileTabel = ({
             </div>
             <div>{trElement(items)}</div>
 
+            {state === 'success' && items.length === 0 && (
+              <div className="flex gap-4 flex-col min-h-max py-10 items-center justify-center">
+                <Icon name="UserPlus" className="w-10 h-10" />
+                <p>Need create first user</p>
+              </div>
+            )}
             {items.length > 0 && pagesInfo[0].maxPage > 0 && (
               <div className="px-2 py-3">
                 <div className="flex items-center justify-between">

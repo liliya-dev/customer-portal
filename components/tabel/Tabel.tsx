@@ -94,10 +94,10 @@ export const Tabel = () => {
   useEffect(() => {
     if (typeof window === undefined || !router.query) return;
     setPageNumber(+router.query?.page - 1 || 0);
-    const sortDirection = firstOf(router.query?.direction);
+    const sortDirection = firstOf(router.query?.direction) || 'asc';
     setSortedFrom(sortDirection);
     setInputValue(firstOf(router.query?.search) || '');
-    setSortBy(firstOf(router.query?.sortBy) || '');
+    setSortBy(firstOf(router.query?.sortBy) || 'name');
   }, [router.query]);
 
   useEffect(() => {
