@@ -21,6 +21,7 @@ export type MobileTabelProps = {
   incrementPage: () => void;
   pagesInfo: { total: number; maxPage: number; perPage: number }[];
   getLastShowedResultNumber: () => number;
+  state: string;
 };
 
 export const MobileTabel = ({
@@ -36,7 +37,8 @@ export const MobileTabel = ({
   decrementPage,
   incrementPage,
   pagesInfo,
-  getLastShowedResultNumber
+  getLastShowedResultNumber,
+  state,
 }) => {
   const [isOpen, setIsOpen] = useState([]);
 
@@ -79,7 +81,9 @@ export const MobileTabel = ({
                 <Icon name="UserCircleBlue" className="w-8 h-8 shrink-0" />
                 <div className="flex flex-col w-full w-[calc(100%-4rem)]">
                   <p className="text-indigo-500  font-medium">{name}</p>
-                  <div className="break-words text-indigo-300 font-normal w-full max-w-full">{email}</div>
+                  <div className="break-words text-indigo-300 font-normal w-full max-w-full">
+                    {email}
+                  </div>
                 </div>
               </div>
             </div>
@@ -135,68 +139,73 @@ export const MobileTabel = ({
         </div>
       );
     });
-  
+  items = [];
   return (
-    items.length > 0 && (
-      <div>
-        <Paper>
-          <div className="shadow-md">
-            <div className="w-full text-left text-indigo-400">
-              <div className="text-xs font-normal text-indigo-400 uppercase bg-gray-200">
-                <div className="flex gap-4 items-center p-2">
-                  <input
-                    type="checkbox"
-                    name="selectAll"
-                    id="selectAll"
-                    className="w-6 h-6 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
-                    onChange={handleSelectAll}
-                    checked={isCheckAll}
-                  />
-                  {isCheck.length > 0 && (
-                    <div
-                      className="p-1 cursor-pointer focus:text-blue-500"
-                      onClick={() => {
-                        setModalNameOpen('deleteAll');
-                        setIsModuleOpen(true);
-                      }}
-                    >
-                      <p className="text-indigo-500 font-medium">Delete Users</p>
-                    </div>
-                  )}
-                </div>
+    <div>
+      <Paper>
+        <div className="shadow-md">
+          <div className="w-full text-left text-indigo-400">
+            <div className="text-xs font-normal text-indigo-400 uppercase bg-gray-200">
+              <div className="flex gap-4 items-center p-2">
+                <input
+                  type="checkbox"
+                  name="selectAll"
+                  id="selectAll"
+                  className="w-6 h-6 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                  onChange={handleSelectAll}
+                  checked={isCheckAll}
+                />
+                {isCheck.length > 0 && (
+                  <div
+                    className="p-1 cursor-pointer focus:text-blue-500"
+                    onClick={() => {
+                      setModalNameOpen('deleteAll');
+                      setIsModuleOpen(true);
+                    }}
+                  >
+                    <p className="text-indigo-500 font-medium">Delete Users</p>
+                  </div>
+                )}
               </div>
+            </div>
+            {items.length === 0 && state === 'succes' ? (
+              <div className="flex gap-4 flex-col min-h-max py-10 items-center justify-center">
+                <Icon name="UserPlus" className="w-10 h-10" />
+                <p>Need create first user</p>
+              </div>
+            ) : (
               <div>{trElement(items)}</div>
-              {items.length > 0 && pagesInfo[0].maxPage > 0 && (
-                <div className="px-2 py-3">
-                  <div className="flex items-center justify-between">
-                    <p className="text-indigo-500 font-medium">
-                      Showing {pageNumber * pagesInfo[0].perPage + 1} to {getLastShowedResultNumber()} of{' '}
-                      {pagesInfo[0].total} results
-                    </p>
-                    <div className="flex gap-3">
-                      <Button
-                        icon='ChevronLeftIcon'
-                        theme='white'
-                        onClick={decrementPage}
-                        as="button"
-                        disabled={pageNumber < 1}
-                      />
-                      <Button
-                        icon='ChevronRightIcon'
-                        theme='white'
-                        onClick={incrementPage}
-                        as="button"
-                        disabled={pageNumber > pagesInfo[0].maxPage - 1}
-                      />
-                    </div>
+            )}
+            {items.length > 0 && pagesInfo[0].maxPage > 0 && (
+              <div className="px-2 py-3">
+                <div className="flex items-center justify-between">
+                  <p className="text-indigo-500 font-medium">
+                    Showing {pageNumber * pagesInfo[0].perPage + 1} to{' '}
+                    {getLastShowedResultNumber()} of {pagesInfo[0].total} results
+                  </p>
+                  <div className="flex gap-3">
+                    <Button
+                      icon="ChevronLeftIcon"
+                      theme="white"
+                      onClick={decrementPage}
+                      as="button"
+                      disabled={pageNumber < 1}
+                    />
+                    <Button
+                      icon="ChevronRightIcon"
+                      theme="white"
+                      onClick={incrementPage}
+                      as="button"
+                      disabled={pageNumber > pagesInfo[0].maxPage - 1}
+                    />
                   </div>
                 </div>
-              )}
-            </div>
+              </div>
+            )}
           </div>
-        </Paper>
-      </div>
-    )
+        </div>
+      </Paper>
+    </div>
   );
 };
 

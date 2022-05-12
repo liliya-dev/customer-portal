@@ -15,7 +15,7 @@ import {
 import { BREAKPOINTS, useBreakpoint } from '../../hooks/useBreakpoint';
 import { Dialog } from '../../components/dialog/Dialog';
 import { SortOrder, UserFields, StaticState } from '../../types';
-
+import { Spinner } from '../loaders/Spinner';
 import DataAPI from '../../api/data';
 import { useRouter } from 'next/router';
 
@@ -92,6 +92,7 @@ export const Tabel = () => {
 
   useEffect(() => {
     if (typeof window === undefined || !router.query) return;
+    setState('loading');
     getUsersData();
   }, [pageNumber, sortedFrom, debouncedInputValue]);
 
@@ -288,6 +289,7 @@ export const Tabel = () => {
           decrementPage={decrementPage}
           incrementPage={incrementPage}
           pagesInfo={pagesInfo}
+          state={state}
         />
       ) : (
         <DeskTabel
@@ -309,7 +311,13 @@ export const Tabel = () => {
           pagesInfo={pagesInfo}
         />
       )}
-
+      {state === 'loading' && (
+        <div className="w-full my-12 flex justify-center">
+          <div className="w-20 h-20">
+            <Spinner />
+          </div>
+        </div>
+      )}
       <Dialog mode="form" onOpenChange={setIsModuleOpen} open={isModuleOpen}>
         {openFormNamed()}
       </Dialog>
