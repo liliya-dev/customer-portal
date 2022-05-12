@@ -1,4 +1,5 @@
 import React, { useState, useCallback } from 'react';
+import cx from 'classnames';
 
 import { Paper } from '../paper/Paper';
 import { Icon } from '../icons/Icon';
@@ -6,8 +7,12 @@ import { formatDate } from '../../helpers/utils/date';
 import { UserType } from '../../types';
 import { truncate } from '../../helpers/utils/string';
 import { Button } from '../buttons/Button';
+import { ParamsListType } from './Tabel';
+
 
 export type DeskTabelProps = {
+  sortBy: string;
+  setSort: (value: ParamsListType[]) => void;
   items: UserType[];
   handleSelectAll: (e: any) => void;
   isCheckAll: boolean;
@@ -18,7 +23,7 @@ export type DeskTabelProps = {
   setIsModuleOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setModalNameOpen: React.Dispatch<React.SetStateAction<string>>;
   sortedFrom: string;
-  setSortedFrom: React.Dispatch<React.SetStateAction<string>>;
+  setSortedFrom: (value: string) => void;
   pageNumber: number;
   decrementPage: () => void;
   incrementPage: () => void;
@@ -27,6 +32,7 @@ export type DeskTabelProps = {
 };
 
 export const DeskTabel = ({
+  setSort,
   items,
   handleSelectAll,
   isCheckAll,
@@ -43,11 +49,18 @@ export const DeskTabel = ({
   incrementPage,
   pagesInfo,
   getLastShowedResultNumber,
+  sortBy,
 }: DeskTabelProps) => {
   const [showMenu, setShowMenu] = useState<boolean>(false);
 
-  const handelSortBtn = () =>
-    sortedFrom === 'desc' ? setSortedFrom('asc') : setSortedFrom('desc');
+  const handelSortBtn = (id) => {
+    console.log(id)
+    if (id === sortBy) {
+      sortedFrom === 'desc' ? setSortedFrom('asc') : setSortedFrom('desc');
+    } else {
+      setSort([{ key: 'direction', value: 'asc' }, { key: 'sortBy', value: id },]);
+    }
+  };
 
   const trElement = useCallback(
     (items) =>
@@ -127,6 +140,13 @@ export const DeskTabel = ({
 
   if (!items) return;
 
+  const tableHeaders = [
+    { name: 'Name', id: 'name' },
+    { name: 'Department', id: 'department' },
+    { name: 'Last Active', id: 'lastActiveDate' },
+    { name: 'Role', id: 'role' },
+  ];
+
   return (
     <div className="flex gap-5 flex-col mb-4">
       <Paper>
@@ -146,26 +166,31 @@ export const DeskTabel = ({
                     />
                   </div>
                 </th>
-                <th scope="col" className="pl-16 py-3" onClick={handelSortBtn}>
-                  <div className="flex items-center gap-2">
-                    <p>Name</p>
-
-                    {sortedFrom === 'desc' ? (
-                      <Icon name="ChevronUpIcon" className="w-6 h-6" />
-                    ) : (
-                      <Icon name="ChevronDownIcon" className="w-6 h-6" />
-                    )}
-                  </div>
-                </th>
-                <th scope="col" className="py-3">
-                  DEPARTMENT
-                </th>
-                <th scope="col" className="py-3">
-                  LAST ACTIVE
-                </th>
-                <th scope="col" className="py-3">
-                  ROLE
-                </th>
+                {tableHeaders.map(({ id, name }) => (
+                  <th
+                    key={id}
+                    scope="col"
+                    className={cx("py-3 cursor-pointer", {
+                      ['pr-8']: id !== sortBy,
+                      ['pl-3']: id === 'name'
+                    })}
+                    onClick={() => handelSortBtn(id)}
+                  >
+                    <div className="flex items-center gap-2">
+                      <p>{name.toUpperCase()}</p>
+                      {id === sortBy && (
+                        <Icon
+                          name={
+                            sortedFrom === 'desc'
+                              ? 'ChevronUpIcon'
+                              : 'ChevronDownIcon'
+                          }
+                          className="w-6 h-6"
+                        />
+                      )}
+                    </div>
+                  </th>
+                ))}
               </tr>
             </thead>
             <tbody>{trElement(items)}</tbody>
@@ -201,7 +226,7 @@ export const DeskTabel = ({
                     theme="white"
                     onClick={incrementPage}
                     as="button"
-                    disabled={pageNumber > pagesInfo[0].maxPage - 1}
+                    disabled={pageNumber > pagesInfo[0].maxPage - 2}
                   />
                 </div>
               </div>

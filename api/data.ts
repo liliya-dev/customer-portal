@@ -9,7 +9,7 @@ export type BasicReqType = {
 
 export type SortFilterType = {
   query?: string;
-  orderedby?: 'lastActiveDate' | 'name' | 'email';
+  orderedby?: string;
   direction?: string;
   page?: number;
   perPage?: Number;

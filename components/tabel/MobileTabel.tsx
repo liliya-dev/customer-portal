@@ -21,6 +21,7 @@ export type MobileTabelProps = {
   incrementPage: () => void;
   pagesInfo: { total: number; maxPage: number; perPage: number }[];
   getLastShowedResultNumber: () => number;
+  setSort: () => string;
 };
 
 export const MobileTabel = ({
@@ -36,7 +37,8 @@ export const MobileTabel = ({
   decrementPage,
   incrementPage,
   pagesInfo,
-  getLastShowedResultNumber
+  getLastShowedResultNumber,
+  setSort,
 }) => {
   const [isOpen, setIsOpen] = useState([]);
 
@@ -79,7 +81,9 @@ export const MobileTabel = ({
                 <Icon name="UserCircleBlue" className="w-8 h-8 shrink-0" />
                 <div className="flex flex-col w-full w-[calc(100%-4rem)]">
                   <p className="text-indigo-500  font-medium">{name}</p>
-                  <div className="break-words text-indigo-300 font-normal w-full max-w-full">{email}</div>
+                  <div className="break-words text-indigo-300 font-normal w-full max-w-full">
+                    {email}
+                  </div>
                 </div>
               </div>
             </div>
@@ -135,7 +139,7 @@ export const MobileTabel = ({
         </div>
       );
     });
-  
+
   return (
     items.length > 0 && (
       <div>
@@ -170,23 +174,23 @@ export const MobileTabel = ({
                 <div className="px-2 py-3">
                   <div className="flex items-center justify-between">
                     <p className="text-indigo-500 font-medium">
-                      Showing {pageNumber * pagesInfo[0].perPage + 1} to {getLastShowedResultNumber()} of{' '}
-                      {pagesInfo[0].total} results
+                      Showing {pageNumber * pagesInfo[0].perPage + 1} to{' '}
+                      {getLastShowedResultNumber()} of {pagesInfo[0].total} results
                     </p>
                     <div className="flex gap-3">
                       <Button
-                        icon='ChevronLeftIcon'
-                        theme='white'
+                        icon="ChevronLeftIcon"
+                        theme="white"
                         onClick={decrementPage}
                         as="button"
                         disabled={pageNumber < 1}
                       />
                       <Button
-                        icon='ChevronRightIcon'
-                        theme='white'
+                        icon="ChevronRightIcon"
+                        theme="white"
                         onClick={incrementPage}
                         as="button"
-                        disabled={pageNumber > pagesInfo[0].maxPage - 1}
+                        disabled={pageNumber > pagesInfo[0].maxPage - 2}
                       />
                     </div>
                   </div>
