@@ -126,56 +126,6 @@ export const Tabel = () => {
     setIsCheckAll(usersList.every(({ _id }) => checkedUsersList.includes(_id)));
   }, [checkedUsersList, checkedUsersList.length, usersList]);
 
-  const addUser = async ({ name, email, role, department }) => {
-    const response = await dataAPI.addUser({
-      tid: accounts[0]?.tenantId,
-      token,
-      body: {
-        department,
-        license: 'FREE',
-        role,
-        email,
-        name,
-      },
-    });
-    if (response.status === 200) {
-      setUsersList([]);
-      setIsModuleOpen(false);
-      getUsersData();
-    }
-  };
-
-  const editUser = async ({ name, email, role, id, department }) => {
-    const response = await dataAPI.editUser({
-      tid: accounts[0]?.tenantId,
-      token,
-      userId: id,
-      body: {
-        name,
-        email,
-        role,
-        department,
-      },
-    });
-    if (response.status === 200) {
-      setIsModuleOpen(false);
-      getUsersData();
-    }
-  };
-
-  const deleteUser = async ({ id }) => {
-    const response = await dataAPI.deleteUser({
-      tid: accounts[0]?.tenantId,
-      token,
-      userId: id,
-    });
-    if (response.status === 200) {
-      setCheckedUsersList([]);
-      setIsModuleOpen(false);
-      getUsersData();
-    }
-  };
-
   const incrementPage = () => {
     const page =
       pagesInfo[0].maxPage !== pageNumber ? pageNumber + 1 : pagesInfo[0].maxPage;
@@ -316,14 +266,14 @@ export const Tabel = () => {
       <Dialog mode="form" onOpenChange={setIsModuleOpen} open={isModuleOpen}>
         <OpenForm
           activeUser={activeUser}
-          addUser={addUser}
           checkedUsersList={checkedUsersList}
-          deleteUser={deleteUser}
-          editUser={editUser}
           isCheckAll={isCheckAll}
           items={usersList}
           modalNameOpen={modalNameOpen}
           setIsModuleOpen={setIsModuleOpen}
+          getUsersData={getUsersData}
+          setUsersList={setUsersList}
+          setCheckedUsersList={setCheckedUsersList}
         />
       </Dialog>
     </div>
