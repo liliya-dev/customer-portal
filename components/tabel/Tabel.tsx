@@ -1,5 +1,5 @@
 import { useMsal } from '@azure/msal-react';
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDebounce } from '../../hooks/useDebounce';
 
 import { DeskTabelMemo as DeskTabel } from './DeskTabel';
@@ -13,21 +13,17 @@ import { SearchMemo as Search } from '../search/Search';
 import { BREAKPOINTS, useBreakpoint } from '../../hooks/useBreakpoint';
 import { DialogMemo as Dialog } from '../../components/dialog/Dialog';
 import { Spinner } from '../loaders/Spinner';
-import { UserFields, StaticState, StaticFormName } from '../../types';
+import { firstOf } from '../../helpers/utils/array';
+import {
+  UserFields,
+  StaticState,
+  StaticFormName,
+  ParamsListType,
+} from '../../types';
 
 import DataAPI from '../../api/data';
 import { useRouter } from 'next/router';
 import { Paper } from '../paper/Paper';
-
-export type ParamsListType = {
-  key: string;
-  value: string | number;
-};
-
-export function firstOf(val: string[] | string) {
-  const firstValue = Array.isArray(val) ? val[0] : val;
-  return firstValue || null;
-}
 
 const dataAPI = new DataAPI();
 

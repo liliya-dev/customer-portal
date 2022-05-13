@@ -17,6 +17,11 @@ export type StaticState = 'loading' | 'idle' | 'success' | 'error';
 
 export type StaticFormName = 'edit' | 'add' | 'delete' | 'deleteAll';
 
+export type ParamsListType = {
+  key: string;
+  value: string | number;
+};
+
 export const COLORS = {
   blue: '#496fff',
   lightblue: '#f7fafc',
