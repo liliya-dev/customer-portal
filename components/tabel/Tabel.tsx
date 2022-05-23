@@ -14,6 +14,7 @@ import { BREAKPOINTS, useBreakpoint } from '../../hooks/useBreakpoint';
 import { DialogMemo as Dialog } from '../../components/dialog/Dialog';
 import { Spinner } from '../loaders/Spinner';
 import { firstOf } from '../../helpers/utils/array';
+import { formatNumberWithCommas } from '../../helpers/utils/string';
 import {
   UserFields,
   StaticState,
@@ -139,9 +140,21 @@ export const Tabel = () => {
 
   const handleSelectAll = (e) => {
     setIsCheckAll(!isCheckAll);
-    setCheckedUsersList([...checkedUsersList, ...usersList.map((item) => item._id)]);
+
+    let newList;
+
     if (isCheckAll) {
-      setCheckedUsersList([]);
+      const newList = [...usersList.map((item) => item._id)];
+
+      setCheckedUsersList([
+        ...checkedUsersList.filter((item) => !newList.includes(item)),
+      ]);
+    } else {
+      newList = [...usersList.map((item) => item._id)].filter(
+        (item) => !checkedUsersList.includes(item),
+      );
+
+      setCheckedUsersList([...checkedUsersList, ...newList]);
     }
   };
 
@@ -157,9 +170,16 @@ export const Tabel = () => {
   return (
     <div className="pb-20">
       <div className="flex flex-col lg:flex-row justify-between lg:items-center mb-5">
-        <Title size="xs" className="mb-5">
-          Users
-        </Title>
+        <div className="flex gap-4 text-indigo-500">
+          <Title size="xs">Users</Title>
+          {Boolean(checkedUsersList.length) && (
+            <div className="py-0.5 px-2 bg-indigo-50">
+              <p>{`${checkedUsersList.length} of ${formatNumberWithCommas(
+                pagesInfo[0].total,
+              )} selected`}</p>
+            </div>
+          )}
+        </div>
         <div className="flex flex-rows gap-3 lg:gap-6 justify-end">
           <Search
             inputValue={inputValue}
