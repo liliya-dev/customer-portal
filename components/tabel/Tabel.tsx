@@ -170,7 +170,7 @@ export const Tabel = () => {
   return (
     <div className="pb-20">
       <div className="flex flex-col lg:flex-row justify-between lg:items-center mb-5">
-        <div className="flex gap-4 text-indigo-500">
+        <div className="flex gap-4 text-indigo-500 mb-4 md:mb-0">
           <Title size="xs">Users</Title>
           {Boolean(checkedUsersList.length) && (
             <div className="py-0.5 px-2 bg-indigo-50">
