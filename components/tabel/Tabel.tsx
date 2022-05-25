@@ -141,20 +141,20 @@ export const Tabel = () => {
   const handleSelectAll = (e) => {
     setIsCheckAll(!isCheckAll);
 
-    let newList;
+    let newListId;
 
     if (isCheckAll) {
-      const newList = [...usersList.map((item) => item._id)];
+      newListId = usersList.map((item) => item._id);
 
       setCheckedUsersList([
-        ...checkedUsersList.filter((item) => !newList.includes(item)),
+        ...checkedUsersList.filter((item) => !newListId.includes(item)),
       ]);
     } else {
-      newList = [...usersList.map((item) => item._id)].filter(
+      newListId = [...usersList.map((item) => item._id)].filter(
         (item) => !checkedUsersList.includes(item),
       );
 
-      setCheckedUsersList([...checkedUsersList, ...newList]);
+      setCheckedUsersList([...checkedUsersList, ...newListId]);
     }
   };
 
@@ -169,7 +169,7 @@ export const Tabel = () => {
 
   return (
     <div className="pb-20">
-      <div className="flex flex-col lg:flex-row justify-between lg:items-center mb-5">
+      <div className="flex flex-col justify-between gap-3 mb-3">
         <div className="flex gap-4 text-indigo-500 mb-4 md:mb-0">
           <Title size="xs">Users</Title>
           {Boolean(checkedUsersList.length) && (
@@ -190,14 +190,45 @@ export const Tabel = () => {
           />
           <Button
             as="button"
-            label="Add User"
-            onClick={() => {
-              setModalNameOpen('add');
-              setIsModuleOpen(!isModuleOpen);
-            }}
+            label="Filters"
             size="md"
-            key={'add'}
+            plain
+            icon="FilterIcon"
+            iconPosition="before"
+            theme="indigo"
           />
+          {Boolean(checkedUsersList.length) ? (
+            <div className="flex gap-2">
+              <Button
+                as="button"
+                label="Export"
+                size="md"
+                icon="ArrowCircleUpIcon"
+                iconPosition="before"
+                align="center"
+              />
+              <Button
+                as="button"
+                label="Delete"
+                size="md"
+                icon="TrashIcon"
+                iconPosition="before"
+                theme="red"
+                align="center"
+              />
+            </div>
+          ) : (
+            <Button
+              as="button"
+              label="Add User"
+              onClick={() => {
+                setModalNameOpen('add');
+                setIsModuleOpen(!isModuleOpen);
+              }}
+              size="md"
+              key={'add'}
+            />
+          )}
         </div>
       </div>
       <Paper>
