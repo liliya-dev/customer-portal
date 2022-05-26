@@ -180,17 +180,16 @@ export const Tabel = () => {
             </div>
           )}
         </div>
-        <div className="flex flex-rows gap-3 lg:gap-6 justify-end">
+        <div className="flex flex-rows gap-3 lg:gap-6 md:justify-end">
           <Search
             inputValue={inputValue}
             setInputValue={(value) => {
               addParams([{ key: 'search', value }]);
             }}
-            isMobile={isMobile}
           />
           <Button
             as="button"
-            label="Filters"
+            label={`${isMobile ? '' : 'Filter'}`}
             size="md"
             plain
             icon="FilterIcon"
@@ -198,10 +197,10 @@ export const Tabel = () => {
             theme="indigo"
           />
           {Boolean(checkedUsersList.length) ? (
-            <div className="flex gap-2">
+            <>
               <Button
                 as="button"
-                label="Export"
+                label={`${isMobile ? '' : 'Export'}`}
                 size="md"
                 icon="ArrowCircleUpIcon"
                 iconPosition="before"
@@ -209,22 +208,23 @@ export const Tabel = () => {
               />
               <Button
                 as="button"
-                label="Delete"
+                label={`${isMobile ? '' : 'Delete'}`}
                 size="md"
                 icon="TrashIcon"
                 iconPosition="before"
                 theme="red"
                 align="center"
               />
-            </div>
+            </>
           ) : (
             <Button
               as="button"
-              label="Add User"
+              label={`${isMobile ? 'Add' : 'Add User'}`}
               onClick={() => {
                 setModalNameOpen('add');
                 setIsModuleOpen(!isModuleOpen);
               }}
+              // icon="UserAddIcon"
               size="md"
               key={'add'}
             />
