@@ -2,10 +2,14 @@ import React from 'react';
 
 import { Paper } from '../paper/Paper';
 
-export const Dropdown = ({ listSelectedCheckBoxes, handelCheckType }) => {
+export const Dropdown = ({
+  listSelectedCheckBoxes,
+  handelCheckType,
+  position = 'top-0 left-3',
+}) => {
   return (
     <div className="relative">
-      <div className="absolute top-0 left-3">
+      <div className={`absolute ${position}`}>
         <Paper>
           <div className="flex flex-col items-start px-3 w-max">
             {listSelectedCheckBoxes.map(({ slug, title }, idx) => (
