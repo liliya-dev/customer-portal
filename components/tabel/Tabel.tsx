@@ -28,6 +28,11 @@ import { Paper } from '../paper/Paper';
 
 const dataAPI = new DataAPI();
 
+const listSelectedCheckBoxes = [
+  { slug: 'currentPage', title: 'On current page' },
+  { slug: 'allPages', title: 'On all pages' },
+];
+
 export const Tabel = () => {
   const { accounts } = useMsal();
   const { screenWidth } = useBreakpoint();
@@ -40,6 +45,7 @@ export const Tabel = () => {
   const [isModuleOpen, setIsModuleOpen] = useState<boolean>(false);
   const [checkedUsersList, setCheckedUsersList] = useState<string[]>([]);
   const [modalNameOpen, setModalNameOpen] = useState<StaticFormName>('add');
+  const [isSelectedBtnOpen, setIsSelectedBtnOpen] = useState<boolean>(false);
   const [inputValue, setInputValue] = useState<string>(
     firstOf(router.query?.search) || '',
   );
@@ -138,7 +144,36 @@ export const Tabel = () => {
     addParams([{ key: 'page', value: page + 1 }]);
   };
 
-  const handleSelectAll = (e) => {
+  const handelCheckType = (e) => {
+    switch (e.target.id) {
+      case 'currentPage':
+        handleSelectAllOnPage(e);
+        break;
+      case 'allPages':
+        handleSelectAll(e);
+        break;
+    }
+    setIsSelectedBtnOpen(false);
+  };
+
+  const handleSelectAll = async (e) => {
+    if (pagesInfo[0].total === checkedUsersList.length) {
+      return setCheckedUsersList([]);
+    } else {
+      const response = await dataAPI.getUsers({
+        tid: accounts[0]?.tenantId,
+        token,
+        query: '',
+        page: 0,
+        perPage: pagesInfo[0].total,
+        orderedby: sortBy,
+        direction: sortedFrom,
+      });
+      setCheckedUsersList([...response.users.map((item) => item._id)]);
+    }
+  };
+
+  const handleSelectAllOnPage = (e) => {
     setIsCheckAll(!isCheckAll);
 
     let newListId;
@@ -239,7 +274,7 @@ export const Tabel = () => {
                 items={usersList}
                 setModalNameOpen={setModalNameOpen}
                 setIsModuleOpen={setIsModuleOpen}
-                handleSelectAll={handleSelectAll}
+                handleSelectAllOnPage={handleSelectAllOnPage}
                 getLastShowedResultNumber={getLastShowedResultNumber}
                 checkedList={checkedUsersList}
                 isCheckAll={isCheckAll}
@@ -248,6 +283,10 @@ export const Tabel = () => {
                 incrementPage={incrementPage}
                 pagesInfo={pagesInfo}
                 setSort={(value) => addParams([{ key: 'sortBy', value }])}
+                listSelectedCheckBoxes={listSelectedCheckBoxes}
+                handelCheckType={handelCheckType}
+                setIsSelectedBtnOpen={setIsSelectedBtnOpen}
+                isSelectedBtnOpen={isSelectedBtnOpen}
               >
                 <UsersList
                   activeUser={activeUser}
@@ -265,7 +304,7 @@ export const Tabel = () => {
                 setSort={(value) => addParams(value)}
                 setIsModuleOpen={setIsModuleOpen}
                 getLastShowedResultNumber={getLastShowedResultNumber}
-                handleSelectAll={handleSelectAll}
+                handleSelectAllOnPage={handleSelectAllOnPage}
                 checkedList={checkedUsersList}
                 isCheckAll={isCheckAll}
                 items={usersList}
@@ -277,6 +316,10 @@ export const Tabel = () => {
                 decrementPage={decrementPage}
                 incrementPage={incrementPage}
                 pagesInfo={pagesInfo}
+                listSelectedCheckBoxes={listSelectedCheckBoxes}
+                handelCheckType={handelCheckType}
+                setIsSelectedBtnOpen={setIsSelectedBtnOpen}
+                isSelectedBtnOpen={isSelectedBtnOpen}
               >
                 <UsersList
                   activeUser={activeUser}

@@ -4,14 +4,15 @@ import cx from 'classnames';
 import { Icon } from '../icons/Icon';
 import { UserType } from '../../types';
 import { Button } from '../buttons/Button';
-import { ParamsListType } from './Tabel';
+import { ParamsListType } from '../../types';
 import { tableHeaders } from './TabelOptions';
+import { Dropdown } from '../dropdown/Dropdown';
 
 export type DeskTabelProps = {
   sortBy: string;
   setSort: (value: ParamsListType[]) => void;
   items: UserType[];
-  handleSelectAll: (e: any) => void;
+  handleSelectAllOnPage: (e: any) => void;
   isCheckAll: boolean;
   checkedList: string[];
   setIsModuleOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -24,12 +25,16 @@ export type DeskTabelProps = {
   pagesInfo: { total: number; maxPage: number; perPage: number }[];
   getLastShowedResultNumber: () => number;
   children: any;
+  listSelectedCheckBoxes: any;
+  handelCheckType: any;
+  isSelectedBtnOpen: boolean;
+  setIsSelectedBtnOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 export const DeskTabel = ({
   setSort,
   items,
-  handleSelectAll,
+  handleSelectAllOnPage,
   isCheckAll,
   checkedList,
   setIsModuleOpen,
@@ -43,6 +48,10 @@ export const DeskTabel = ({
   getLastShowedResultNumber,
   sortBy,
   children,
+  listSelectedCheckBoxes,
+  handelCheckType,
+  isSelectedBtnOpen,
+  setIsSelectedBtnOpen,
 }: DeskTabelProps) => {
   const handelSortBtn = (id) => {
     if (id === sortBy) {
@@ -61,16 +70,19 @@ export const DeskTabel = ({
         <table className="table-auto w-full text-left">
           <thead className="uppercase bg-gray-200">
             <tr>
-              <th scope="col" className="px-5">
-                <div className="flex items-center">
+              <th scope="col" className="pl-5">
+                <div className="flex items-center gap-2">
                   <input
                     type="checkbox"
                     className="w-6 h-6 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
                     name="selectAll"
                     id="selectAll"
-                    onChange={handleSelectAll}
+                    onChange={handleSelectAllOnPage}
                     checked={isCheckAll}
                   />
+                  <div onClick={() => setIsSelectedBtnOpen(!isSelectedBtnOpen)}>
+                    <Icon name="ChevronDownIcon" className="w-6 h-6" />
+                  </div>
                 </div>
               </th>
               {tableHeaders.map(({ id, name }) => (
@@ -98,6 +110,12 @@ export const DeskTabel = ({
               ))}
             </tr>
           </thead>
+          {isSelectedBtnOpen && (
+            <Dropdown
+              listSelectedCheckBoxes={listSelectedCheckBoxes}
+              handelCheckType={handelCheckType}
+            />
+          )}
           <tbody>{children}</tbody>
         </table>
         {items.length > 0 && pagesInfo[0].maxPage > 0 && (
